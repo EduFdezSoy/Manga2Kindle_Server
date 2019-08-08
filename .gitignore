@@ -1,0 +1,40 @@
+# Dependency directory
+node_modules/
+*-lock*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Optional npm cache directory
+.npm
+
+# dotenv environment variables file
+.env
+.env.test
+
+# vscode directory
+.vscode/
+
+# kindlegen
+kindlegen/kindlegen
+
+# kindle comic converter
+kcc-master/*
+
+# aplication data
+/input/*
+/output/*
+unziped_*
+*.epub
+*.mobi
