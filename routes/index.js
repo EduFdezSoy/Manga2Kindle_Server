@@ -7,6 +7,7 @@ module.exports = function (app) {
     //     .post(buses.getBus);
 
     var manga = require('../controllers/manga_controller')
+    var manga = require('../controllers/author_controller')
 
 
     app.get('/', (req, res) => res.send('Hello World!'))
