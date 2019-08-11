@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS chapter (
     manga_id INTEGER REFERENCES manga(id),
     lang_id INTEGER REFERENCES language(id),
     chapter FLOAT,
+    title VARCHAR(100),
     file_path VARCHAR(500),
     checksum VARCHAR(32)
 );
@@ -60,7 +61,8 @@ INSERT INTO author (name, surname, nickname) VALUES
 ('', '', 'Katsuwo'),
 ('Nagisa', 'Fujita', ''),
 ('', '', '774 (Nanashi)'),
- ('', '', 'Namo');
+ ('', '', 'Namo'),
+ ('Yamamoto', 'Souichirou', 'Kijouyu Udon');
 
 INSERT INTO language (code, name) VALUES
 ('EN', 'English'),
@@ -75,4 +77,5 @@ INSERT INTO manga (uuid, title, author_id) VALUES
 ('urn:uuid:74357528-3935-2740-8282-624925308253', 'Hitoribocchi no OO Seikatsu', 6),
 ('urn:uuid:74357528-3935-2740-8282-624925308648', 'Do Chokkyuu Kareshi x Kanojo', 7),
 ('urn:uuid:74357528-3935-2740-8282-624925308494', 'Ijiranaide, Nagatoro-san', 8),
-('urn:uuid:74357528-3935-2740-8282-624925314569', 'Ookami Shounen wa Kyou mo Uso wo Kasaneru', 9);
+('urn:uuid:74357528-3935-2740-8282-624925314569', 'Ookami Shounen wa Kyou mo Uso wo Kasaneru', 9),
+('urn:uuid:74357528-3935-2740-8282-624925313108', 'Karakai Jouzu no Takagi-san', 10);
