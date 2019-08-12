@@ -80,10 +80,64 @@ exports.addAuthor = (name, surname, nickname, callback) => {
 
 //#endregion
 
+//#region chapters methods
+
+exports.putChapter = (manga_id, lang_id, title, volume, chapter, route, checksum, mail, callback) => {
+    pool.query('INSERT INTO chapter(manga_id, lang_id, volume, chapter, title, file_path, checksum, mail) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, manga_id, lang_id, volume, chapter, title',
+        [manga_id, lang_id, volume, chapter, title, route, checksum, mail], (err, res) => {
+            if (err)
+                callback(err.stack, null)
+            else
+                callback(null, res.rows)
+        })
+}
+
+//#endregion
+
+//#region status methods
+
+exports.getStatus = (chapter, callback) => {
+    pool.query('SELECT chapter_id, delivered, error, reason FROM status WHERE chapter_id = $1', [chapter], (err, res) => {
+        if (err)
+            callback(err.stack, null)
+        else
+            callback(null, res.rows)
+    })
+}
+
+exports.setStatus = (chapter, delivered, error, reason, callback) => {
+    pool.query('INSERT INTO status(chapter_id, delivered, error, reason) VALUES ($1, $2, $3, $4)', [chapter, delivered, error, reason], (err, res) => {
+        if (err)
+            callback(err.stack, null)
+        else
+            callback(null, res.rows)
+    })
+}
+
+exports.editStatus = (chapter, delivered, error, reason, callback) => {
+    pool.query('UPDATE status SET delivered = $1, error = $2, reason = $3 WHERE chapter_id = $4', [delivered, error, reason, chapter], (err, res) => {
+        if (err)
+            callback(err.stack, null)
+        else
+            callback(null, res.rows)
+    })
+}
+
+//#endregion
+
 //#region utils
 
 exports.uuidExists = (uuid, callback) => {
     pool.query('SELECT COUNT(1) FROM manga WHERE uuid = $1', [uuid], (err, res) => {
+        if (err)
+            callback(err.stack, null)
+        else
+            callback(null, res.rows)
+    })
+}
+
+exports.getLanguages = (callback) => {
+    pool.query('SELECT * FROM language', (err, res) => {
         if (err)
             callback(err.stack, null)
         else
