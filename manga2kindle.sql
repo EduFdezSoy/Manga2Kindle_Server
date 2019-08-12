@@ -36,10 +36,12 @@ CREATE TABLE IF NOT EXISTS chapter (
     id SERIAL PRIMARY KEY,
     manga_id INTEGER REFERENCES manga(id),
     lang_id INTEGER REFERENCES language(id),
+    volume INTEGER,
     chapter FLOAT,
     title VARCHAR(100),
     file_path VARCHAR(500),
-    checksum VARCHAR(32)
+    checksum VARCHAR(32),
+    mail VARCHAR(100)
 );
 
 CREATE TABLE IF NOT EXISTS status (
