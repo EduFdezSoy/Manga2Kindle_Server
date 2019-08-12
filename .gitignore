@@ -38,3 +38,5 @@ kcc-master/*
 unziped_*
 *.epub
 *.mobi
+/tmp/*
+/files/*

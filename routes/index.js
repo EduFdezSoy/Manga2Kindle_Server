@@ -17,7 +17,7 @@ module.exports = function (app) {
 
     app.route('/manga/chapter')
         .get(chapter.getChapter)
-        .put(chapter.putChapter)
+        .post(chapter.postChapter)
 
     //#endregion
 
