@@ -27,6 +27,11 @@ exports.putManga = (req, res) => {
     if (req.query.title && req.query.author_id) {
         console.log('PUT /manga called')
 
+        do {
+            req.query.uuid = 'urn:uuid:74357528-3935-2740-8282-'
+            req.query.uuid += Math.floor(Math.random() * (999999999999 - 100000000000) + 100000000000)
+        } while (data.uuidExists(req.query.uuid))
+        
         data.putManga(req.query, (err, res2) => {
             res.json(res2)
         })

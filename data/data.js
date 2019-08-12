@@ -19,8 +19,7 @@ exports.searchManga = (search, callback) => {
 }
 
 exports.putManga = (data, callback) => {
-    uuid = "urn:uuid:74357528-3935-2740-8282-624925313108" //TODO: generar UUID
-    dao.addManga(data.title, uuid, data.author_id, callback)
+    dao.addManga(data.title, data.uuid, data.author_id, callback)
 }
 
 //#endregion
@@ -37,6 +36,24 @@ exports.searchAuthor = (search, callback) => {
 
 exports.putAuthor = (data, callback) => {
     dao.addAuthor(data.name, data.surname, data.nickname, callback)
+}
+
+//#endregion
+
+//#region utils
+
+exports.uuidExists = (uuid) => {
+    dao.uuidExists(uuid, (err, res) => {
+        if (err) {
+            return true
+        }
+        else {
+            if (res[0].count == 0)
+                return false
+            else
+                return true
+        }
+    })
 }
 
 //#endregion

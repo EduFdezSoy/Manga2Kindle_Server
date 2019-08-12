@@ -79,3 +79,16 @@ exports.addAuthor = (name, surname, nickname, callback) => {
 }
 
 //#endregion
+
+//#region utils
+
+exports.uuidExists = (uuid, callback) => {
+    pool.query('SELECT COUNT(1) FROM manga WHERE uuid = $1', [uuid], (err, res) => {
+        if (err)
+            callback(err.stack, null)
+        else
+            callback(null, res.rows)
+    })
+}
+
+//#endregion
