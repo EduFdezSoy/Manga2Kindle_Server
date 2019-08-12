@@ -2,8 +2,10 @@ module.exports = function (app) {
     var manga = require('../controllers/manga_controller')
     var authors = require('../controllers/author_controller')
     var chapter = require('../controllers/chapter_controller')
+    var lang = require('../controllers/lang_controller')
+    var status = require('../controllers/status_controller')
 
-    app.get('/', (req, res) => res.send('Hello World!'))
+    app.get('/', (req, res) => res.json('Manga2kindle v0.1'))
 
     //#region MANGA ROUTES
 
@@ -16,7 +18,6 @@ module.exports = function (app) {
     //#region CHAPTER ROUTES
 
     app.route('/manga/chapter')
-        .get(chapter.getChapter)
         .post(chapter.postChapter)
 
     //#endregion
@@ -29,6 +30,13 @@ module.exports = function (app) {
 
     //#endregion
 
-    // wildcall
-    app.get('/:msg', (req, res) => res.json('Hello ' + req.params.msg))
+    //status
+
+    app.route('/status')
+        .get(status.getStatus)
+        .put(status.setError)
+
+    // languaje
+    app.route('/languages')
+        .get(lang.getLanguages)
 }
