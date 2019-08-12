@@ -40,20 +40,66 @@ exports.putAuthor = (data, callback) => {
 
 //#endregion
 
+//#region chapters
+
+exports.putChapter = (data, callback) => {
+    dao.putChapter(data.manga_id, data.lang_id, data.title, data.volume, data.chapter, data.route, data.checksum, data.email, callback)
+}
+
+//#endregion
+
+//#region status
+
+exports.getStatus = (chapter_id, callback) => {
+    if (chapter_id)
+        dao.getStatus(chapter_id, callback)
+    else
+        callback(400, null)
+}
+
+exports.setStatus = (data, callback) => {
+    if (data.delivered == null)
+        data.delivered = false
+
+    if (data.error == null)
+        data.error = false
+
+    dao.setStatus(data.chapter_id, data.delivered, data.error, data.reason, callback)
+}
+
+exports.setError = (data, callback) => {
+    // TODO: check data and return errors
+
+    if (data.delivered == null)
+        data.delivered = false
+
+    if (data.error == null)
+        data.error = true
+
+    if (data.chapter_id)
+        dao.editStatus(data.chapter_id, data.delivered, data.error, data.reason, callback)
+    else
+        dao.setStatus(data.chapter_id, data.delivered, data.error, data.reason, callback)
+}
+
+//#endregion
+
 //#region utils
 
 exports.uuidExists = (uuid) => {
     dao.uuidExists(uuid, (err, res) => {
-        if (err) {
+        if (err)
             return true
-        }
-        else {
+        else
             if (res[0].count == 0)
                 return false
             else
                 return true
-        }
     })
+}
+
+exports.getLanguages = (callback) => {
+    dao.getLanguages(callback)
 }
 
 //#endregion
