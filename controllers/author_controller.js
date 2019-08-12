@@ -5,20 +5,28 @@ exports.getAuthor = (req, res) => {
         console.log('GET /author called (search)')
 
         data.searchAuthor(req.query.search, (err, res2) => {
-            res.json(res2)
+            if (err)
+                res.status(503).json('Service Unavailable')
+            else
+                res.json(res2)
         })
     } else if (req.query.limit) {
         console.log('GET /author called (limit)')
 
         data.getAuthors(req.query.limit, (err, res2) => {
-            res.json(res2)
+            if (err)
+                res.status(503).json('Service Unavailable')
+            else
+                res.json(res2)
         })
     } else {
         console.log('GET /author called')
 
         data.getAuthors(null, (err, res2) => {
-
-            res.json(res2)
+            if (err)
+                res.status(503).json('Service Unavailable')
+            else
+                res.json(res2)
         })
     }
 }
@@ -28,7 +36,10 @@ exports.putAuthor = (req, res) => {
         console.log('PUT /author called')
 
         data.putAuthor(req.query, (err, res2) => {
-            res.json(res2)
+            if (err)
+                res.status(503).json('Service Unavailable')
+            else
+                res.json(res2)
         })
     } else {
         console.log('PUT /author called (Bad Request)')
