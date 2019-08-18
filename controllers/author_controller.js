@@ -41,7 +41,7 @@ exports.getAuthor = (req, res) => {
 }
 
 exports.putAuthor = (req, res) => {
-    if (req.query.name && req.query.surname && req.query.nickname) {
+    if (req.query.name || req.query.surname || req.query.nickname) {
         console.log('PUT /author called')
 
         data.putAuthor(req.query, (err, res2) => {

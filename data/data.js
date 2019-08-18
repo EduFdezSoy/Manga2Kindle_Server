@@ -39,6 +39,15 @@ exports.searchAuthor = (search, callback) => {
 }
 
 exports.putAuthor = (data, callback) => {
+    if (!data.name)
+        data.name = ""
+
+    if (!data.surname)
+        data.surname = ""
+
+    if (!data.nickname)
+        data.nickname = ""
+
     dao.addAuthor(data.name, data.surname, data.nickname, callback)
 }
 
