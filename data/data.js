@@ -11,15 +11,41 @@ const dao = require('./dao')
  * @param {Function} callback
  */
 exports.getMangas = (limit = 100, callback) => {
+    if (limit > 1000)
+        limit = 1000
+
     dao.getMangas(limit, callback)
 }
 
+/**
+ * 
+ * @param {String} search
+ */
 exports.searchManga = (search, callback) => {
+    if (!search)
+        callback(new Error("A required param was null"), null)
+    else {
+    search = search.trim()
     dao.searchManga(search, callback)
 }
+}
 
-exports.putManga = (data, callback) => {
-    dao.addManga(data.title, data.uuid, data.author_id, callback)
+/**
+ * 
+ * @param {String} title
+ * @param {String} uuid
+ * @param {Number} author_id
+ */
+exports.putManga = (title, uuid, author_id, callback) => {
+    if (!title || !uuid || !author_id)
+        callback(new Error("A required param was null"), null)
+    else {
+        title = title.trim()
+        if (title == "")
+            callback(new Error("A required param was a white string"), null)
+        else
+            dao.addManga(data.title, data.uuid, data.author_id, callback)
+    }
 }
 
 //#endregion

@@ -40,7 +40,7 @@ exports.putManga = (req, res) => {
             req.query.uuid += Math.floor(Math.random() * (999999999999 - 100000000000) + 100000000000)
         } while (data.uuidExists(req.query.uuid))
 
-        data.putManga(req.query, (err, res2) => {
+        data.putManga(req.query.title, req.query.uuid, req.query.author_id, (err, res2) => {
             if (err)
                 res.status(503).json('Service Unavailable')
             else
