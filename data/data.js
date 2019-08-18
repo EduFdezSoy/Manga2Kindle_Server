@@ -25,9 +25,9 @@ exports.searchManga = (search, callback) => {
     if (!search)
         callback(new Error("A required param was null"), null)
     else {
-    search = search.trim()
-    dao.searchManga(search, callback)
-}
+        search = search.trim()
+        dao.searchManga(search, callback)
+    }
 }
 
 /**
@@ -52,29 +52,64 @@ exports.putManga = (title, uuid, author_id, callback) => {
 
 //#region author methods
 
+/**
+ * 
+ * @param {Number} limit
+ * @param {Function} callback
+ */
 exports.getAuthors = (limit = 100, callback) => {
+    if (limit > 1000)
+        limit = 1000
+
     dao.getAuthors(limit, callback)
 }
 
+/**
+ * 
+ * @param {Number} id
+ * @param {Function} callback
+ */
 exports.getAuthor = (id, callback) => {
-    dao.getAuthor(id, callback)
+    if (!id)
+        callback(new Error("A required param was null"), null)
+    else
+        dao.getAuthor(id, callback)
 }
 
+/**
+ * 
+ * @param {String} search
+ * @param {Function} callback
+ */
 exports.searchAuthor = (search, callback) => {
-    dao.searchAuthor(search, callback)
+    if (!search)
+        callback(new Error("A required param was null"), null)
+    else {
+        search = search.trim()
+        dao.searchAuthor(search, callback)
+    }
 }
+/**
+ * 
+ * @param {String} name
+ * @param {String} surname
+ * @param {String} nickname
+ * @param {Function} callback
+ */
+exports.putAuthor = (name, surname, nickname, callback) => {
+    if (!name)
+        name = ""
 
-exports.putAuthor = (data, callback) => {
-    if (!data.name)
-        data.name = ""
+    if (!surname)
+        surname = ""
 
-    if (!data.surname)
-        data.surname = ""
+    if (!nickname)
+        nickname = ""
 
-    if (!data.nickname)
-        data.nickname = ""
-
-    dao.addAuthor(data.name, data.surname, data.nickname, callback)
+    name = name.trim()
+    surname = surname.trim()
+    nickname = nickname.trim()
+    dao.addAuthor(name, surname, nickname, callback)
 }
 
 //#endregion

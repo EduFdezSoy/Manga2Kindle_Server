@@ -44,7 +44,7 @@ exports.putAuthor = (req, res) => {
     if (req.query.name || req.query.surname || req.query.nickname) {
         console.log('PUT /author called')
 
-        data.putAuthor(req.query, (err, res2) => {
+        data.putAuthor(req.query.name, req.query.surname, req.query.nickname, (err, res2) => {
             if (err)
                 res.status(503).json('Service Unavailable')
             else
