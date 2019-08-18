@@ -19,6 +19,15 @@ exports.getAuthor = (req, res) => {
             else
                 res.json(res2)
         })
+    } else if (req.query.id) {
+        console.log('GET /author called (id)')
+
+        data.getAuthor(req.query.id, (err, res2) => {
+            if (err)
+                res.status(503).json('Service Unavailable')
+            else
+                res.json(res2)
+        })
     } else {
         console.log('GET /author called')
 

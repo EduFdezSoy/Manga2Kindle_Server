@@ -53,6 +53,15 @@ exports.getAuthors = (limit, callback) => {
     })
 }
 
+exports.getAuthor = (id, callback) => {
+    pool.query('SELECT id, name, surname, nickname FROM author WHERE id = $1 LIMIT 100', [id], (err, res) => {
+        if (err)
+            callback(err.stack, null)
+        else
+            callback(null, res.rows)
+    })
+}
+
 exports.searchAuthor = (search, callback) => {
     search = '%' + search + '%'
 

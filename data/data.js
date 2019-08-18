@@ -30,6 +30,10 @@ exports.getAuthors = (limit = 100, callback) => {
     dao.getAuthors(limit, callback)
 }
 
+exports.getAuthor = (id, callback) => {
+    dao.getAuthor(id, callback)
+}
+
 exports.searchAuthor = (search, callback) => {
     dao.searchAuthor(search, callback)
 }
