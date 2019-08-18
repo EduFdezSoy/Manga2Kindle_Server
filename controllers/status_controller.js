@@ -12,7 +12,7 @@ exports.getStatus = (req, res) => {
 }
 
 exports.setError = (req, res) => {
-    data.setError(req, (err, res2) => {
+    data.setError(req.query.chapter_id, req.query.delivered, req.query.error, req.query.reason, (err, res2) => {
         if (err == 400)
             res.status(400).json('Bad Request')
         else if (err)

@@ -152,29 +152,15 @@ exports.getStatus = (chapter_id, callback) => {
         callback(400, null)
 }
 
-exports.setStatus = (data, callback) => {
-    if (data.delivered == null)
-        data.delivered = false
-
-    if (data.error == null)
-        data.error = false
-
-    dao.setStatus(data.chapter_id, data.delivered, data.error, data.reason, callback)
+exports.setStatus = (chapter_id, delivered = false, error = false, reason, callback) => {
+    dao.setStatus(chapter_id, delivered, error, reason, callback)
 }
 
-exports.setError = (data, callback) => {
-    // TODO: check data and return errors
-
-    if (data.delivered == null)
-        data.delivered = false
-
-    if (data.error == null)
-        data.error = true
-
-    if (data.chapter_id)
-        dao.editStatus(data.chapter_id, data.delivered, data.error, data.reason, callback)
+exports.setError = (chapter_id, delivered = false, error = false, reason, callback) => {
+    if (chapter_id)
+        dao.editStatus(chapter_id, delivered, error, reason, callback)
     else
-        dao.setStatus(data.chapter_id, data.delivered, data.error, data.reason, callback)
+        dao.setStatus(chapter_id, delivered, error, reason, callback)
 }
 
 //#endregion
