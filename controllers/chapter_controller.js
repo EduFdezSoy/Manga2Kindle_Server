@@ -19,7 +19,7 @@ exports.postChapter = (req, res) => {
         console.log('POST /manga/chapter called')
 
         // insert chapter data
-        data.putChapter(req.body, (err, res2) => {
+        data.putChapter(req.body.manga_id, req.body.lang_id, req.body.title, req.body.volume, req.body.chapter, req.body.route, req.body.checksum, req.body.mail, (err, res2) => {
             let id = res2[0].id
 
             if (err)

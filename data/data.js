@@ -116,8 +116,29 @@ exports.putAuthor = (name, surname, nickname, callback) => {
 
 //#region chapters
 
-exports.putChapter = (data, callback) => {
-    dao.putChapter(data.manga_id, data.lang_id, data.title, data.volume, data.chapter, data.route, data.checksum, data.email, callback)
+/**
+ * 
+ * @param {Number} manga_id
+ * @param {Number} lang_id
+ * @param {String} title
+ * @param {Number} volume
+ * @param {Number} chapter
+ * @param {String} route
+ * @param {String} checksum
+ * @param {String} mail
+ * @param {Function} callback
+ */
+exports.putChapter = (manga_id, lang_id, title, volume, chapter, route, checksum, mail, callback) => {
+    if (!manga_id || !lang_id || !title || !route || !checksum || !mail)
+        callback(new Error("A required param was null"), null)
+    else {
+        title = title.trim()
+        mail = mail.trim()
+        if (title == "" || mail == "")
+            callback(new Error("A required param was a white string"), null)
+        else
+            dao.putChapter(manga_id, lang_id, title, volume, chapter, route, checksum, mail, callback)
+    }
 }
 
 //#endregion
