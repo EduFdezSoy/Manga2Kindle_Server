@@ -44,7 +44,7 @@ exports.putManga = (title, uuid, author_id, callback) => {
         if (title == "")
             callback(new Error("A required param was a white string"), null)
         else
-            dao.addManga(data.title, data.uuid, data.author_id, callback)
+            dao.addManga(title, uuid, author_id, callback)
     }
 }
 
