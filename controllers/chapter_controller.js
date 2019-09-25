@@ -11,6 +11,11 @@ exports.postChapter = (req, res) => {
     // form the path and name
     req.body.route = __dirname + '/../files/' + req.files.file.md5.substring(0, 7) + '_' + today + '.zip'
 
+    // for some reason I can see right now the checksum and title and the mail to comes between ""
+    req.body.checksum = req.body.checksum.substring(1, req.body.checksum.length-1)
+    req.body.title = req.body.title.substring(1, req.body.title.length-1)
+    req.body.mail = req.body.mail.substring(1, req.body.mail.length-1)
+
     // check integrity
     if (req.files.file.md5 != req.body.checksum) {
         console.log('POST /manga/chapter called (Bad Request)')
