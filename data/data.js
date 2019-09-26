@@ -10,6 +10,17 @@ const dao = require('./dao')
  * 
  * @param {Function} callback
  */
+exports.getManga = (id, callback) => {
+    if (!id)
+    callback(new Error("A required param was null"), null)
+
+    dao.getManga(id, callback)
+}
+
+/**
+ * 
+ * @param {Function} callback
+ */
 exports.getMangas = (limit = 100, callback) => {
     if (limit > 1000)
         limit = 1000

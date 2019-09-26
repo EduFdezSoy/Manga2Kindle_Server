@@ -5,7 +5,7 @@
  */
 
 const fs = require('fs')
-const rimraf = require('rimraf')
+const shell = require('shelljs')
 const AdmZip = require('adm-zip')
 const archiver = require('archiver')
 const xml2js = require('xml2js')
@@ -35,8 +35,8 @@ exports.open = function (epub_name, callback) {
 /**
  * TODO: write documentation
  */
-exports.editTags = function (json, title, chapter, author, author_as, series_identifier, callback) {
-    editJson(json, title, chapter, author, author_as, series_identifier)
+exports.editTags = function (json, title, serie, chapter, author, author_as, series_identifier, callback) {
+    editJson(json, title, serie, chapter, author, author_as, series_identifier)
         .then((title, json) => callback(title, json))
 }
 
@@ -47,8 +47,13 @@ exports.close = function (epub_name, title, json, callback) {
     buildOEBPS(epub_name, json)
     compressEPUB(epub_name, title)
         .then(filename => {
-            deleteTempFiles(epub_name)
-            callback(filename, null)
+            deleteTempFiles(epub_name, filename, (err, final_name) => {
+                if (err) {
+                    callback(null, err)
+                } else {
+                    callback(final_name, null)
+                }
+            })
         })
         .catch(err => {
             callback(null, err)
@@ -60,13 +65,13 @@ exports.close = function (epub_name, title, json, callback) {
  * 
  * @callback {Function} filename and error
  */
-exports.edit = function (epub_name, title, chapter, author, author_as, series_identifier, callback) {
+exports.edit = function (epub_name, title, serie, chapter, author, author_as, series_identifier, callback) {
     extractEpub(epub_name)
     parseOEBPS(epub_name, (err, json) => {
         if (err) {
             callback(null, err)
         } else {
-            let obj = editJson(json, title, chapter, author, author_as, series_identifier)
+            let obj = editJson(json, title, serie, chapter, author, author_as, series_identifier)
             buildOEBPS(epub_name, obj)
             compressEPUB(epub_name, obj.ebook_title, (err, final_name) => {
                 if (err) {
@@ -104,6 +109,10 @@ function extractEpub(epub_name) {
     }
 
     let zip = new AdmZip(name + '.epub')
+
+    // cut epub path to only get the name
+    name = name.substring(name.lastIndexOf('/') + 1)
+
     zip.extractAllTo(/*target path*/'unziped_' + name, /*overwrite*/true)
 }
 
@@ -115,6 +124,9 @@ function extractEpub(epub_name) {
  */
 function parseOEBPS(epub_name, callback) {
     let name
+
+    // cut epub path to only get the name
+    epub_name = epub_name.substring(epub_name.lastIndexOf('/') + 1)
 
     // check if the epub_name has the extension on it
     if (epub_name.endsWith('.epub')) {
@@ -141,22 +153,23 @@ function parseOEBPS(epub_name, callback) {
 /**
  * TODO: write documentation
  */
-function editJson(json, title, chapter, author, author_as, series_identifier) {
+function editJson(json, title, serie, chapter, author, author_as, series_identifier) {
     if (json == null) {
         throw ("JSON is undefined")
     }
 
-    json.package.metadata[0]['dc:title'][0] = title + " - " + json.package.metadata[0]['dc:title'][0]
+    // json.package.metadata[0]['dc:title'][0] = title + " - " + json.package.metadata[0]['dc:title'][0]
+    json.package.metadata[0]['dc:title'][0] = title;
     // json.package.metadata[0]['dc:title'][0] = title + " " + chapter;
     json.package.metadata[0]['dc:creator'][0] = { _: author, '$': { 'opf:file-as': author_as, 'opf:role': 'aut' } }
     json.package.metadata[0]['dc:contributor'][0]['_'] = process.env.MASTER_NAME + " v" + process.env.VERSION
 
-    json.package.metadata[0].meta.push({ '$': { property: 'belongs-to-collection', id: 'c01' }, '_': title })
+    json.package.metadata[0].meta.push({ '$': { property: 'belongs-to-collection', id: 'c01' }, '_': serie })
     json.package.metadata[0].meta.push({ '$': { refines: '#c01', property: 'collection-type' }, '_': 'series' })
     json.package.metadata[0].meta.push({ '$': { refines: '#c01', property: 'group-position', }, '_': chapter })
     json.package.metadata[0].meta.push({ '$': { refines: '#c01', property: 'dcterms:identifier' }, '_': series_identifier })
 
-    let ebook_title = title + " - " + json.package.metadata[0]['dc:title'][0] + " - " + author
+    let ebook_title = json.package.metadata[0]['dc:title'][0] + " - " + author
 
     return { ebook_title, json }
 }
@@ -172,6 +185,9 @@ function buildOEBPS(epub_name, oebpsObj) {
     let xml = builder.buildObject(oebpsObj.json)
     let name
 
+    // cut epub path to only get the name
+    epub_name = epub_name.substring(epub_name.lastIndexOf('/') + 1)
+
     // check if the epub_name has the extension on it
     if (epub_name.endsWith('.epub')) {
         name = epub_name.substring(0, epub_name.length - 5)
@@ -186,9 +202,12 @@ function buildOEBPS(epub_name, oebpsObj) {
  * TODO: write documentation
  */
 function compressEPUB(epub_name, ebook_title, callback) {
-    let outputStream = fs.createWriteStream(__dirname + "/output/" + ebook_title + ".epub")
+    let outputStream = fs.createWriteStream(__dirname + "/../output/" + ebook_title + ".epub")
     let zip = archiver('zip')
     let name
+
+    // cut epub path to only get the name
+    epub_name = epub_name.substring(epub_name.lastIndexOf('/') + 1)
 
     // check if the epub_name has the extension on it
     if (epub_name.endsWith('.epub')) {
@@ -228,6 +247,9 @@ function compressEPUB(epub_name, ebook_title, callback) {
 function deleteTempFiles(epub_name, final_name, callback) {
     let name
 
+    console.log('trying to delete zip file')
+    shell.rm('-rf', epub_name)
+
     // check if the epub_name has the extension on it
     if (epub_name.endsWith('.epub')) {
         name = epub_name.substring(0, epub_name.length - 5)
@@ -235,11 +257,14 @@ function deleteTempFiles(epub_name, final_name, callback) {
         name = epub_name
     }
 
-    console.log('trying to delete unziped files')
-    rimraf.sync(__dirname + "/unziped_" + name)
-
     console.log('trying to delete temp epub')
-    rimraf.sync(__dirname + "/" + name + ".epub")
+    shell.rm('-rf', name + '.epub')
+
+    // cut epub path to only get the name
+    epub_name = epub_name.substring(epub_name.lastIndexOf('/') + 1)
+
+    console.log('trying to delete unziped files')
+    shell.rm('-rf', __dirname + '/../unziped_' + name)
 
     callback(null, final_name)
 }

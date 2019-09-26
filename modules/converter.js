@@ -13,7 +13,7 @@ const shell = require('shelljs')
  * @param {Function} callback err or null
  */
 exports.FolderToEpub = function (folderName, callback) {
-    var comand = "kcc-master/kcc-c2e.py -p KV -m -2 -u -r 0 -f EPUB -o " + __dirname + " \"" + __dirname + "/input/" + folderName + "\""
+    var comand = "kcc-master/kcc-c2e.py -p KV -m -2 -u -r 0 -f EPUB " + folderName
 
     if (shell.exec(comand).code !== 0) {
         shell.exit(1)

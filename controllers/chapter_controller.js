@@ -46,32 +46,111 @@ exports.postChapter = (req, res) => {
                         ob.error = true
                         ob.reason = 'unable to move: ' + err
 
-                        data.setError(ob, (err, res) => {
+                        data.setError(ob, (err, res3) => {
                             if (err)
                                 console.log(err)
                             else
-                                console.log(res)
+                                console.log(res3)
                         })
                     } else {
                         console.log('copied ' + req.body.route)
 
-                        data.setStatus(id, delivered = false, error = false, reason = null, (err, res) => {
+                        data.setStatus(id, false, false, null, (err, res4) => {
                             if (err)
                                 console.log(err)
                             else
-                                console.log(res)
+                                console.log(res4)
                         })
                         converter.FolderToEpub(req.body.route, (err) => {
                             if (err) {
                                 console.log(err)
-                                data.setError(id, delivered = false, error = true, err, (err, res) => {
+                                data.setError(id, false, true, err, (err, res5) => {
                                     if (err)
                                         console.log(err)
                                     else
-                                        console.log(res)
+                                        console.log(res5)
                                 })
                             } else {
-                                console.log("its working.. for now")
+                                data.getManga(req.body.manga_id, (err, res6) => {
+                                    if (err) {
+                                        console.log(err)
+                                        data.setError(id, false, true, err, (err, res7) => {
+                                            if (err)
+                                                console.log(err)
+                                            else
+                                                console.log(res7)
+                                        })
+                                    } else {
+                                        data.getAuthor(res6[0].author_id, (err, res8) => {
+                                            if (err) {
+                                                console.log(err)
+                                                data.setError(id, false, true, err, (err, res9) => {
+                                                    if (err)
+                                                        console.log(err)
+                                                    else
+                                                        console.log(res9)
+                                                })
+                                            } else {
+                                                // epub name
+                                                let epub_name = req.body.route
+                                                if (epub_name.endsWith('.epub'))
+                                                    epub_name = epub_name.substring(0, epub_name.length - 5)
+
+                                                if (epub_name.endsWith('.zip'))
+                                                    epub_name = epub_name.substring(0, epub_name.length - 4)
+
+                                                epub_name += '.epub'
+
+                                                // title
+                                                let title = res6[0].title
+
+                                                if (req.body.volume != null && req.body.volume != 0)
+                                                    title += " Vol." + req.body.volume
+
+                                                title += " Ch." + (req.body.chapter * 1).toString()
+
+                                                if (req.body.title != "")
+                                                    title += " - " + req.body.title
+
+                                                // author
+                                                author = res8[0].name + " " + res8[0].surname
+                                                author_as = res8[0].surname + ", " + res8[0].name
+
+                                                if (res8[0].surname == null || res8[0].surname == "") {
+                                                    author = res8[0].name
+                                                    author_as = res8[0].name
+                                                }
+
+                                                if (res8[0].name == null || res8[0].name == "") {
+                                                    author = res8[0].surname
+                                                    author_as = res8[0].name
+                                                }
+
+                                                if (res8[0].nickname != null && res8[0].nickname != "") {
+                                                    if (author != "")
+                                                        author += " (" + res8[0].nickname + ")"
+                                                    else
+                                                        author = res8[0].nickname
+
+                                                    if (author_as != "")
+                                                        author_as += " (" + res8[0].nickname + ")"
+                                                    else
+                                                        author_as = res8[0].nickname
+                                                }
+
+                                                // itadakimasu!
+                                                epubManager.edit(epub_name, title, res6[0].title, req.body.chapter, author, author_as, res6[0].uuid, (filename, err) => {
+                                                    console.info(filename)
+                                                    
+                                                    // convert to mobi
+
+                                                    // send to email
+
+                                                })
+                                            }
+                                        })
+                                    }
+                                })
                             }
                         })
                     }
@@ -79,4 +158,4 @@ exports.postChapter = (req, res) => {
             }
         })
     }
-}
+} // and this is why node is called a callback hell

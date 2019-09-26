@@ -11,6 +11,15 @@ const pool = new Pool()
  * 
  * callback(err, res)
  */
+exports.getManga = (id, callback) => {
+    pool.query('SELECT id, title, uuid, author_id FROM manga WHERE id = $1', [id], (err, res) => {
+        if (err)
+            callback(err.stack, null)
+        else
+            callback(null, res.rows)
+    })
+}
+
 exports.getMangas = (limit = 100, callback) => {
     pool.query('SELECT id, title, uuid, author_id FROM manga LIMIT $1', [limit], (err, res) => {
         if (err)
