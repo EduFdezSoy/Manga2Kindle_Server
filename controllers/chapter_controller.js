@@ -1,4 +1,7 @@
 const data = require('../data/data')
+const converter = require('../modules/converter')
+const epubManager = require('../modules/epub_manager')
+const emailer = require('../modules/emailer')
 
 exports.postChapter = (req, res) => {
     // get current date
@@ -12,9 +15,9 @@ exports.postChapter = (req, res) => {
     req.body.route = __dirname + '/../files/' + req.files.file.md5.substring(0, 7) + '_' + today + '.zip'
 
     // for some reason I can see right now the checksum and title and the mail to comes between ""
-    req.body.checksum = req.body.checksum.substring(1, req.body.checksum.length-1)
-    req.body.title = req.body.title.substring(1, req.body.title.length-1)
-    req.body.mail = req.body.mail.substring(1, req.body.mail.length-1)
+    req.body.checksum = req.body.checksum.substring(1, req.body.checksum.length - 1)
+    req.body.title = req.body.title.substring(1, req.body.title.length - 1)
+    req.body.mail = req.body.mail.substring(1, req.body.mail.length - 1)
 
     // check integrity
     if (req.files.file.md5 != req.body.checksum) {
@@ -25,11 +28,11 @@ exports.postChapter = (req, res) => {
 
         // insert chapter data
         data.putChapter(req.body.manga_id, req.body.lang_id, req.body.title, req.body.volume, req.body.chapter, req.body.route, req.body.checksum, req.body.mail, (err, res2) => {
-            let id = res2[0].id
-
             if (err)
                 res.status(503).json('Service Unavailable')
             else {
+                let id = res2[0].id
+
                 // return chapter data
                 res.json(res2)
 
@@ -49,9 +52,29 @@ exports.postChapter = (req, res) => {
                             else
                                 console.log(res)
                         })
+                    } else {
+                        console.log('copied ' + req.body.route)
+
+                        data.setStatus(id, delivered = false, error = false, reason = null, (err, res) => {
+                            if (err)
+                                console.log(err)
+                            else
+                                console.log(res)
+                        })
+                        converter.FolderToEpub(req.body.route, (err) => {
+                            if (err) {
+                                console.log(err)
+                                data.setError(id, delivered = false, error = true, err, (err, res) => {
+                                    if (err)
+                                        console.log(err)
+                                    else
+                                        console.log(res)
+                                })
+                            } else {
+                                console.log("its working.. for now")
+                            }
+                        })
                     }
-                    console.log('copied ' + req.body.route)
-                    // TODO: process the file and update status table
                 })
             }
         })
