@@ -157,10 +157,15 @@ exports.setStatus = (chapter_id, delivered = false, error = false, reason, callb
 }
 
 exports.setError = (chapter_id, delivered = false, error = false, reason, callback) => {
-    if (chapter_id)
-        dao.editStatus(chapter_id, delivered, error, reason, callback)
-    else
-        dao.setStatus(chapter_id, delivered, error, reason, callback)
+    this.getStatus(chapter_id, (err, res) => {
+        if (err)
+            callback(500, null)
+        else
+            if (res[0] != null)
+                dao.editStatus(chapter_id, delivered, error, reason, callback)
+            else
+                dao.setStatus(chapter_id, delivered, error, reason, callback)
+    })
 }
 
 //#endregion
