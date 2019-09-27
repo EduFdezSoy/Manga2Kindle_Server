@@ -46,40 +46,25 @@ exports.postChapter = (req, res) => {
                         ob.error = true
                         ob.reason = 'unable to move: ' + err
 
-                        data.setError(ob, (err, res) => {
-                            if (err)
-                                console.log(err)
-                        })
+                        data.setError(ob, (err, res) => { if (err) console.log(err) })
                     } else {
                         console.log('copied ' + req.body.route)
 
-                        data.setStatus(id, false, false, null, (err, res) => {
-                            if (err)
-                                console.log(err)
-                        })
+                        data.setStatus(id, false, false, null, (err, res) => { if (err) console.log(err) })
                         converter.FolderToEpub(req.body.route, (err) => {
                             if (err) {
                                 console.log(err)
-                                data.setError(id, false, true, err, (err, res) => {
-                                    if (err)
-                                        console.log(err)
-                                })
+                                data.setError(id, false, true, err, (err, res) => { if (err) console.log(err) })
                             } else {
                                 data.getManga(req.body.manga_id, (err, res6) => {
                                     if (err) {
                                         console.log(err)
-                                        data.setError(id, false, true, err, (err, res) => {
-                                            if (err)
-                                                console.log(err)
-                                        })
+                                        data.setError(id, false, true, err, (err, res) => { if (err) console.log(err) })
                                     } else {
                                         data.getAuthor(res6[0].author_id, (err, res8) => {
                                             if (err) {
                                                 console.log(err)
-                                                data.setError(id, false, true, err, (err, res) => {
-                                                    if (err)
-                                                        console.log(err)
-                                                })
+                                                data.setError(id, false, true, err, (err, res) => { if (err) console.log(err) })
                                             } else {
                                                 // epub name
                                                 let epub_name = req.body.route
@@ -159,10 +144,7 @@ exports.postChapter = (req, res) => {
                                                                         let status = res.response.substring(0, 2)
 
                                                                         if (status == 25) {
-                                                                            data.setError(id, true, false, null, (err, res) => {
-                                                                                if (err)
-                                                                                    console.log(err)
-                                                                            })
+                                                                            data.setError(id, true, false, null, (err, res) => { if (err) console.log(err) })
                                                                         } else {
                                                                             data.setError(id, true, true, res.response, (err, res) => {
                                                                                 if (err)
