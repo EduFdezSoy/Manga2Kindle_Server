@@ -237,7 +237,7 @@ function parseBools(boolean) {
  */
 // NOTE: booleans 0 = false, 1 = true
 function parseIntToBools(integer) {
-    if (integer = 1)
+    if (integer == 1)
         return true
     else
         return false
