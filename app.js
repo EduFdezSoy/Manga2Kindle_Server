@@ -1,3 +1,10 @@
+/**
+ * @files Main class, starts the server 
+ * @author Eduardo Fernandez <yo@edufdezsoy.es>
+ * @copyright Eduardo Fernandez 2019
+ * @license CC_BY-NC-SA_4.0
+ */
+
 const express = require('express')
 const dotenv = require('dotenv')
 const bodyParser = require('body-parser')
