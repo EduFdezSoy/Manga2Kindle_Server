@@ -16,7 +16,7 @@ app.use(jsonParser)
 
 app.use(fileupload({
     useTempFiles : true,
-    tempFileDir  : './tmp/'
+    tempFileDir  : './' + process.env.TEMP_FOLDER + '/'
 }))
 
 var routes = require('./routes/index')

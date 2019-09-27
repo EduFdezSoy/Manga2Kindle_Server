@@ -113,7 +113,7 @@ function extractEpub(epub_name) {
     // cut epub path to only get the name
     name = name.substring(name.lastIndexOf('/') + 1)
 
-    zip.extractAllTo(/*target path*/'unziped_' + name, /*overwrite*/true)
+    zip.extractAllTo(/*target path*/process.env.TEMP_FOLDER + '/unziped_' + name, /*overwrite*/true)
 }
 
 /**
@@ -135,7 +135,7 @@ function parseOEBPS(epub_name, callback) {
         name = epub_name
     }
 
-    fs.readFile("unziped_" + name + "/OEBPS/content.opf", "utf-8", (err, data) => {
+    fs.readFile(process.env.TEMP_FOLDER + "/unziped_" + name + "/OEBPS/content.opf", "utf-8", (err, data) => {
         if (err) {
             callback(err, null)
         } else {
@@ -195,7 +195,7 @@ function buildOEBPS(epub_name, oebpsObj) {
         name = epub_name
     }
 
-    fs.writeFileSync("unziped_" + name + "/OEBPS/content.opf", xml)
+    fs.writeFileSync(process.env.TEMP_FOLDER + "/unziped_" + name + "/OEBPS/content.opf", xml)
 }
 
 /**
@@ -237,7 +237,7 @@ function compressEPUB(epub_name, ebook_title, callback) {
     })
 
     zip.pipe(outputStream)
-    zip.directory('unziped_' + name + '/', false)
+    zip.directory(process.env.TEMP_FOLDER + '/unziped_' + name + '/', false)
     zip.finalize()
 }
 
@@ -264,7 +264,7 @@ function deleteTempFiles(epub_name, final_name, callback) {
     epub_name = epub_name.substring(epub_name.lastIndexOf('/') + 1)
 
     console.log('trying to delete unziped files')
-    shell.rm('-rf', __dirname + '/../unziped_' + name)
+    shell.rm('-rf', __dirname + '/../' + process.env.TEMP_FOLDER + '/unziped_' + name)
 
     callback(null, final_name)
 }
