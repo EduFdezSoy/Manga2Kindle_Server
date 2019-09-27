@@ -25,7 +25,7 @@ var transporter = nodemailer.createTransport({
  * 
  * @param {String} file
  * @param {String} mail_to
- * @param {Function} callback optional
+ * @param {Function} callback optional (err, res)
  */
 exports.sendFile = function (file, mail_to, callback = null) {
     if (callback == null) {
@@ -57,7 +57,7 @@ exports.sendErrorMail = function (msg, err) {
  * 
  * @param {String} file 
  * @param {String} mail_to 
- * @param {Function} callback 
+ * @param {Function} callback (err, res)
  */
 function sendEbook(file, mail_to, callback) {
     var mailOptions = {
@@ -74,11 +74,12 @@ function sendEbook(file, mail_to, callback) {
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log('Unable send the email: ' + error)
+            callback(error, null)
         }
 
         rimraf(file, function () {
             console.log("Email sent: " + info.response + " - file deleted (" + file + ")")
-            callback()
+            callback(null, info)
         })
     })
 }
