@@ -142,8 +142,37 @@ exports.postChapter = (req, res) => {
                                                                         console.log(err)
                                                                 })
                                                             } else {
-                                                                // send to email
+                                                                // remove extension and add new one
+                                                                if (filename.endsWith('.epub'))
+                                                                    filename = filename.substring(0, filename.length - 5)
+                                                                filename += '.mobi'
 
+                                                                // send to email
+                                                                emailer.sendFile(__dirname + "/../output/" + filename, req.body.mail, (err, res) => {
+                                                                    if (err) {
+                                                                        console.info(err)
+                                                                        data.setError(id, false, true, err.error, (err, res) => {
+                                                                            if (err)
+                                                                                console.log(err)
+                                                                        })
+                                                                    } else {
+                                                                        let status = res.response.substring(0, 2)
+
+                                                                        if (status == 25) {
+                                                                            data.setError(id, true, false, null, (err, res) => {
+                                                                                if (err)
+                                                                                    console.log(err)
+                                                                            })
+                                                                        } else {
+                                                                            data.setError(id, true, true, res.response, (err, res) => {
+                                                                                if (err)
+                                                                                    console.log(err)
+                                                                                else
+                                                                                    console.log('Chapter send but failed')
+                                                                            })
+                                                                        }
+                                                                    }
+                                                                })
                                                             }
                                                         })
                                                     }
