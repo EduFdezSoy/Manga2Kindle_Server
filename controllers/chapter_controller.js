@@ -46,49 +46,39 @@ exports.postChapter = (req, res) => {
                         ob.error = true
                         ob.reason = 'unable to move: ' + err
 
-                        data.setError(ob, (err, res3) => {
+                        data.setError(ob, (err, res) => {
                             if (err)
                                 console.log(err)
-                            else
-                                console.log(res3)
                         })
                     } else {
                         console.log('copied ' + req.body.route)
 
-                        data.setStatus(id, false, false, null, (err, res4) => {
+                        data.setStatus(id, false, false, null, (err, res) => {
                             if (err)
                                 console.log(err)
-                            else
-                                console.log(res4)
                         })
                         converter.FolderToEpub(req.body.route, (err) => {
                             if (err) {
                                 console.log(err)
-                                data.setError(id, false, true, err, (err, res5) => {
+                                data.setError(id, false, true, err, (err, res) => {
                                     if (err)
                                         console.log(err)
-                                    else
-                                        console.log(res5)
                                 })
                             } else {
                                 data.getManga(req.body.manga_id, (err, res6) => {
                                     if (err) {
                                         console.log(err)
-                                        data.setError(id, false, true, err, (err, res7) => {
+                                        data.setError(id, false, true, err, (err, res) => {
                                             if (err)
                                                 console.log(err)
-                                            else
-                                                console.log(res7)
                                         })
                                     } else {
                                         data.getAuthor(res6[0].author_id, (err, res8) => {
                                             if (err) {
                                                 console.log(err)
-                                                data.setError(id, false, true, err, (err, res9) => {
+                                                data.setError(id, false, true, err, (err, res) => {
                                                     if (err)
                                                         console.log(err)
-                                                    else
-                                                        console.log(res9)
                                                 })
                                             } else {
                                                 // epub name
@@ -140,12 +130,23 @@ exports.postChapter = (req, res) => {
 
                                                 // itadakimasu!
                                                 epubManager.edit(epub_name, title, res6[0].title, req.body.chapter, author, author_as, res6[0].uuid, (filename, err) => {
-                                                    console.info(filename)
-                                                    
-                                                    // convert to mobi
+                                                    if (err) {
+                                                        console.info(err)
+                                                    } else {
+                                                        // convert to mobi
+                                                        converter.EpubToMobi(filename, (err) => {
+                                                            if (err) {
+                                                                console.log(err)
+                                                                data.setError(id, false, true, err, (err, res) => {
+                                                                    if (err)
+                                                                        console.log(err)
+                                                                })
+                                                            } else {
+                                                                // send to email
 
-                                                    // send to email
-
+                                                            }
+                                                        })
+                                                    }
                                                 })
                                             }
                                         })
