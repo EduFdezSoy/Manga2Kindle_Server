@@ -203,7 +203,9 @@ function buildOEBPS(epub_name, oebpsObj) {
  */
 function compressEPUB(epub_name, ebook_title, callback) {
     let outputStream = fs.createWriteStream(__dirname + "/../output/" + ebook_title + ".epub")
-    let zip = archiver('zip')
+    let zip = archiver('zip', {
+        zlib: { level: 9 } // Sets the compression level.
+    })
     let name
 
     // cut epub path to only get the name
@@ -218,17 +220,6 @@ function compressEPUB(epub_name, ebook_title, callback) {
 
     outputStream.on('close', function () {
         console.log(Math.round(((zip.pointer() / 1000) / 1000) * 100) / 100 + ' MB epub file saved'); // print the mb saved
-
-        // // ==== CONVERT TO MOBI ====
-        // try {
-        //     converter.EpubToMobi(ebook_title + '.epub')
-        // } catch (error) {
-        //     deleteTempFiles()
-        //     throw error
-        // }
-    })
-
-    zip.on('close', function () {
         callback(null, ebook_title + '.epub')
     })
 
@@ -246,9 +237,11 @@ function compressEPUB(epub_name, ebook_title, callback) {
  */
 function deleteTempFiles(epub_name, final_name, callback) {
     let name
+    let comand
 
-    console.log('trying to delete zip file')
-    shell.rm('-rf', epub_name)
+    console.log('deleting epub file')
+    comand = epub_name
+    shell.rm('-rf', comand)
 
     // check if the epub_name has the extension on it
     if (epub_name.endsWith('.epub')) {
@@ -257,14 +250,18 @@ function deleteTempFiles(epub_name, final_name, callback) {
         name = epub_name
     }
 
-    console.log('trying to delete temp epub')
-    shell.rm('-rf', name + '.epub')
+    if (process.env.DELETE_INPUT) {
+        console.log('deleting zip file')
+        comand = name + '.zip'
+        shell.rm('-rf', comand)
+    }
 
     // cut epub path to only get the name
-    epub_name = epub_name.substring(epub_name.lastIndexOf('/') + 1)
+    name = name.substring(name.lastIndexOf('/') + 1)
 
-    console.log('trying to delete unziped files')
-    shell.rm('-rf', __dirname + '/../' + process.env.TEMP_FOLDER + '/unziped_' + name)
+    console.log('deleting unziped files')
+    comand = __dirname + '/../' + process.env.TEMP_FOLDER + '/unziped_' + name
+    shell.rm('-rf', comand)
 
     callback(null, final_name)
 }
