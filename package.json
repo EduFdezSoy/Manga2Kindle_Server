@@ -13,6 +13,12 @@
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.5",
-    "pg": "^7.12.0"
+    "pg": "^7.12.0",
+    "nodemailer": "^6.1.1",
+    "adm-zip": "^0.4.13",
+    "archiver": "^3.0.0",
+    "path": "^0.12.7",
+    "shelljs": "^0.8.3",
+    "xml2js": "^0.4.19"
   }
 }

@@ -1,0 +1,1 @@
+This folder stores the finished documents (epub and mobi/azw)

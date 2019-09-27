@@ -10,6 +10,17 @@ const dao = require('./dao')
  * 
  * @param {Function} callback
  */
+exports.getManga = (id, callback) => {
+    if (!id)
+        callback(new Error("A required param was null"), null)
+
+    dao.getManga(id, callback)
+}
+
+/**
+ * 
+ * @param {Function} callback
+ */
 exports.getMangas = (limit = 100, callback) => {
     if (limit > 1000)
         limit = 1000
@@ -147,26 +158,47 @@ exports.putChapter = (manga_id, lang_id, title, volume, chapter, route, checksum
 
 exports.getStatus = (chapter_id, callback) => {
     if (chapter_id)
-        dao.getStatus(chapter_id, callback)
+        dao.getStatus(chapter_id, (err, res) => {
+            if (res) {
+                res[0].delivered = parseIntToBools(res[0].delivered)
+                res[0].error = parseIntToBools(res[0].error)
+            }
+            callback(err, res)
+        })
     else
         callback(400, null)
 }
 
 exports.setStatus = (chapter_id, delivered = false, error = false, reason, callback) => {
+    delivered = parseBools(delivered)
+    error = parseBools(error)
+
     dao.setStatus(chapter_id, delivered, error, reason, callback)
 }
 
 exports.setError = (chapter_id, delivered = false, error = false, reason, callback) => {
-    if (chapter_id)
-        dao.editStatus(chapter_id, delivered, error, reason, callback)
-    else
-        dao.setStatus(chapter_id, delivered, error, reason, callback)
+    delivered = parseBools(delivered)
+    error = parseBools(error)
+
+    this.getStatus(chapter_id, (err, res) => {
+        if (err)
+            callback(500, null)
+        else
+            if (res[0] != null)
+                dao.editStatus(chapter_id, delivered, error, reason, callback)
+            else
+                dao.setStatus(chapter_id, delivered, error, reason, callback)
+    })
 }
 
 //#endregion
 
 //#region utils
 
+/**
+ * 
+ * @param {String} uuid
+ */
 exports.uuidExists = (uuid) => {
     dao.uuidExists(uuid, (err, res) => {
         if (err)
@@ -179,8 +211,36 @@ exports.uuidExists = (uuid) => {
     })
 }
 
+/**
+ * 
+ * @param {Function} callback
+ */
 exports.getLanguages = (callback) => {
     dao.getLanguages(callback)
+}
+
+/**
+ * 
+ * @param {Boolean} boolean 
+ */
+// NOTE: booleans 0 = false, 1 = true
+function parseBools(boolean) {
+    if (boolean)
+        return 1
+    else
+        return 0
+}
+
+/**
+ * 
+ * @param {Number} integer 
+ */
+// NOTE: booleans 0 = false, 1 = true
+function parseIntToBools(integer) {
+    if (integer == 1)
+        return true
+    else
+        return false
 }
 
 //#endregion
