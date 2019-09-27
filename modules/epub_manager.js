@@ -217,7 +217,7 @@ function compressEPUB(epub_name, ebook_title, callback) {
     }
 
     outputStream.on('close', function () {
-        // console.log(Math.round(((zip.pointer() / 1000) / 1000) * 100) / 100 + ' MB file saved'); // print the mb saved
+        console.log(Math.round(((zip.pointer() / 1000) / 1000) * 100) / 100 + ' MB epub file saved'); // print the mb saved
 
         // // ==== CONVERT TO MOBI ====
         // try {
