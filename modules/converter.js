@@ -30,8 +30,7 @@ exports.FolderToEpub = function (folderName, callback) {
  */
 exports.EpubToMobi = function (file, callback) {
     // TODO: check if kindlegen is "installed"
-    var comand = "kindlegen/kindlegen -dont_append_source -locale en \"" + __dirname + "/output/" + file + "\""
-
+    var comand = "kindlegen/kindlegen -dont_append_source -locale en \"" + __dirname + "/../output/" + file + "\""
     if (shell.exec(comand).code !== 0) {
         shell.exit(1)
         callback('kindlegen conversion failed')
