@@ -37,4 +37,6 @@ exports.EpubToMobi = function (file, callback) {
     } else {
         callback(null)
     }
+    console.log('deleting epub')
+    shell.rm('-rf', __dirname + "/../output/" + file)
 }
