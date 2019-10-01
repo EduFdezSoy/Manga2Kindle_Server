@@ -7,6 +7,11 @@ module.exports = function (app) {
 
     app.get('/', (req, res) => res.json('Manga2kindle v0.1'))
 
+    app.get('/hello', (req, res) => res.json({
+        'name' : process.env.MASTER_NAME,
+        'version' : process.env.VERSION
+    }))
+
     //#region MANGA ROUTES
 
     app.route('/manga')
