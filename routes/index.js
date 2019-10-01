@@ -5,7 +5,7 @@ module.exports = function (app) {
     var lang = require('../controllers/lang_controller')
     var status = require('../controllers/status_controller')
 
-    app.get('/', (req, res) => res.json(process.env.MASTER_NAME+' v'+process.env.VERSION))
+    app.get('/', (req, res) => res.json(process.env.MASTER_NAME + ' v' + process.env.VERSION))
 
     //#region MANGA ROUTES
 
