@@ -10,7 +10,7 @@ exports.postChapter = (req, res) => {
     today = '[' + dd + '-' + mm + '-' + yyyy + ']'
 
     // set a random to avoid any rewrite
-    let random = Math.floor(Math.random()*(999-100+1)+100)
+    let random = Math.floor(Math.random() * (999 - 100 + 1) + 100)
 
     // form the path and name
     req.body.route = __dirname + '/../files/' + today + '_' + req.files.file.md5.substring(0, 7) + '_' + random + '.zip'
@@ -59,8 +59,21 @@ exports.postChapter = (req, res) => {
                             req.body.mail
                         )
 
-                        // launch async converter
-                        converter.convert(converter_object)
+                        data.setStatus(id, false, false, null, (err, res) => {
+                            if (err) {
+                                console.log(err)
+                                data.setError(id, false, true, "Unable to save to database: " + err, (err, res) => { if (err) console.log(err) })
+                            } else {
+                                // launch async converter
+                                try {
+                                    converter.convert(converter_object)
+                                } catch (err) {
+                                    console.log(err)
+                                    data.setError(id, false, true, "Something goes wrong in the worker: " + err, (err, res) => { if (err) console.log(err) })
+                                }
+                            }
+                        })
+
                     }
                 })
             }

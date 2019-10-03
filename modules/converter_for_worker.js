@@ -7,94 +7,86 @@ const emailer = require('./emailer')
  * @param {Object} ob object formed with Converter.formConvObject()
  */
 module.exports = function (ob, callback) {
-    console.log('hey')
-    if (saved(ob.id)) {
-        // convert file to epub
-        converter.FolderToEpub(ob.route, (err) => {
-            if (err)
-                ifError(ob.id, err, "Can't convert to Epub")
-            else {
-                data.getManga(ob.manga_id, (err, res_manga) => {
-                    if (err)
-                        ifError(ob.id, err, "Can't get the Manga")
-                    else {
-                        data.getAuthor(res_manga[0].author_id, (err, res_author) => {
-                            if (err)
-                                ifError(ob.id, err, "Can't get the Author")
-                            else {
-                                let epub_name = formEpubFilename(ob.route)
-                                let title = formEpubTitle(res_manga[0].title, ob.chapter, ob.volume, ob.title)
-                                let author = formAuthorName(res_author[0])
-                                let author_as = formAuthorAs(res_author[0])
+    // convert file to epub
+    converter.FolderToEpub(ob.route, (err) => {
+        if (err)
+            ifError(ob.id, err, callback, "Can't convert to Epub")
+        else {
+            data.getManga(ob.manga_id, (err, res_manga) => {
+                if (err)
+                    ifError(ob.id, err, callback, "Can't get the Manga")
+                else {
+                    data.getAuthor(res_manga[0].author_id, (err, res_author) => {
+                        if (err)
+                            ifError(ob.id, err, callback, "Can't get the Author")
+                        else {
+                            let epub_name = formEpubFilename(ob.route)
+                            let title = formEpubTitle(res_manga[0].title, ob.chapter, ob.volume, ob.title)
+                            let author = formAuthorName(res_author[0])
+                            let author_as = formAuthorAs(res_author[0])
 
-                                // itadakimasu!  --  edit the epub, add lots of metadata and close it
-                                epubManager.edit(epub_name, title, res_manga[0].title, ob.chapter, author, author_as, res_manga[0].uuid, (filename, err) => {
-                                    if (err)
-                                        ifError(ob.id, err, "Can't edit the Epub")
-                                    else {
-                                        // convert to mobi
-                                        converter.EpubToMobi(filename, (err) => {
-                                            if (err)
-                                                ifError(ob.id, err, "Can't edit the Epub")
-                                            else {
-                                                filename = changeExtension(filename)
+                            // itadakimasu!  --  edit the epub, add lots of metadata and close it
+                            epubManager.edit(epub_name, title, res_manga[0].title, ob.chapter, author, author_as, res_manga[0].uuid, (filename, err) => {
+                                if (err)
+                                    ifError(ob.id, err, callback, "Can't edit the Epub")
+                                else {
+                                    // convert to mobi
+                                    converter.EpubToMobi(filename, (err) => {
+                                        if (err)
+                                            ifError(ob.id, err, callback, "Can't edit the Epub")
+                                        else {
+                                            filename = changeExtension(filename)
 
-                                                // lets send this file!
-                                                emailer.sendFile(__dirname + '/../output/' + filename, ob.mail, (err, res) => {
-                                                    if (err)
-                                                        ifError(ob.id, err, "Something sending the manga failed")
-                                                    else {
-                                                        let status = res.response.substring(0, 2)
+                                            // lets send this file!
+                                            emailer.sendFile(__dirname + '/../output/' + filename, ob.mail, (err, res_mail) => {
+                                                if (err)
+                                                    ifError(ob.id, err, callback, "Something sending the manga failed")
+                                                else {
+                                                    let status = res_mail.response.substring(0, 2)
 
-                                                        if (status == 25) {
-                                                            data.setError(ob.id, true, false, null, (err, res) => { if (err) console.log(err) })
-                                                        } else {
-                                                            data.setError(ob.id, true, true, "Chapter sent but failed: " + res.response, (err, res) => {
-                                                                if (err)
-                                                                    console.log(err)
-                                                                else
-                                                                    console.log('Chapter sent but failed')
-                                                            })
-                                                        }
-                                                        callback(err, res)
+                                                    if (status == 25) {
+                                                        data.setError(ob.id, true, false, null, (err, res) => {
+                                                            if (err)
+                                                                console.log(err)
+
+                                                            callback(err, res_mail)
+                                                        })
+                                                    } else {
+                                                        data.setError(ob.id, true, true, "Chapter sent but failed: " + res_mail.response, (err, res) => {
+                                                            if (err)
+                                                                console.log(err)
+                                                            else
+                                                                console.log('Chapter sent but failed')
+
+                                                            callback(err, res_mail)
+                                                        })
                                                     }
-                                                })
-                                            }
-                                        })
-                                    }
-                                })
-                            }
-                        })
-                    }
-                })
-            }
-        })
-    } else {
-        callback("error", null)
-    }
-}    // a truly horrible callback hell
-
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        }
+    })
+}   // a truly horrible callback hell
 
 //#region private functions 
 
-function ifError(chapter_id, err, msg = "Error") {
+function ifError(chapter_id, err, callback, msg = "Error") {
     console.log(err)
 
     let reason = msg + ": " + err
     data.setError(chapter_id, false, true, reason, (err, res) => {
         if (err)
             console.log(err)
-    })
-}
 
-function saved(chapter_id) {
-    data.setStatus(chapter_id, false, false, null, (err, res) => {
-        if (err) {
-            console.log(err)
-            ifError(chapter_id, err, "Unable to save to database")
-        }
+        callback(reason, res)
     })
-    return true
 }
 
 function formEpubFilename(route) {

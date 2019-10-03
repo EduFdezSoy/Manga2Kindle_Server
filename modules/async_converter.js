@@ -4,17 +4,18 @@ class Converter {
 
     constructor() {
         this.worker = workerFarm(
-            { maxConcurrentWorkers: 1 },
+            {
+                maxCallsPerWorker: 1,
+                maxConcurrentWorkers: 1
+            },
             require.resolve('./converter_for_worker')
         )
     }
 
     convert(conv_obj) {
         this.worker(conv_obj, (err, res) => {
-            console.log(res)
-            console.log(err)
-
-            console.log("done?")
+            if (err)
+                console.log(err)
         })
     }
 
