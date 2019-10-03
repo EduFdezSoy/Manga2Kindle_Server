@@ -6,7 +6,7 @@
  */
 
 const nodemailer = require('nodemailer')
-const rimraf = require("rimraf")
+const shell = require('shelljs')
 const dotenv = require('dotenv')
 dotenv.config()
 
@@ -77,10 +77,9 @@ function sendEbook(file, mail_to, callback) {
             callback(error, null)
         }
 
-        rimraf(file, function () {
-            console.log("Email sent: " + info.response + " - file deleted (" + file + ")")
-            callback(null, info)
-        })
+        shell.rm('-rf', file)
+        console.log("Email sent: " + info.response + " - file deleted (" + file + ")")
+        callback(null, info)
     })
 }
 
