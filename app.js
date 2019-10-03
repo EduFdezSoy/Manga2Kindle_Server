@@ -9,11 +9,15 @@ const express = require('express')
 const dotenv = require('dotenv')
 const bodyParser = require('body-parser')
 const fileupload = require('express-fileupload')
+const async_converter = require('./modules/async_converter')
 
 const app = express()
 dotenv.config()
 
 const port = process.env.PORT || 3000
+
+// we want to create one and only instance of this, so we create it here and the others calls must be always the same
+let converter = new async_converter().getInstance()
 
 app.listen(port, () => console.log(`Manga2kindle server v${process.env.VERSION} listening on port ${port}!`))
 
