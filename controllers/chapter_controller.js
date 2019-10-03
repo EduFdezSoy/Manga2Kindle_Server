@@ -11,8 +11,11 @@ exports.postChapter = (req, res) => {
     let yyyy = today.getFullYear()
     today = '[' + dd + '-' + mm + '-' + yyyy + ']'
 
+    // set a random to avoid any rewrite
+    let random = Math.floor(Math.random()*(999-100+1)+100)
+
     // form the path and name
-    req.body.route = __dirname + '/../files/' + req.files.file.md5.substring(0, 7) + '_' + today + '.zip'
+    req.body.route = __dirname + '/../files/' + today + '_' + req.files.file.md5.substring(0, 7) + '_' + random + '.zip'
 
     // for some reason I can see right now the checksum and title and the mail to comes between ""
     req.body.checksum = req.body.checksum.substring(1, req.body.checksum.length - 1)
