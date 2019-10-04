@@ -35,16 +35,27 @@ exports.putManga = (req, res) => {
     if (req.query.title && req.query.author_id) {
         console.log('PUT /manga called')
 
-        do {
-            req.query.uuid = 'urn:uuid:74357528-3935-2740-8282-' // TODO: add this to the .env
-            req.query.uuid += Math.floor(Math.random() * (999999999999 - 100000000000) + 100000000000)
-        } while (data.uuidExists(req.query.uuid))
-
-        data.putManga(req.query.title, req.query.uuid, req.query.author_id, (err, res2) => {
+        // check if the manga already exists
+        data.searchManga(req.query.title, (err, res2) => {
             if (err)
                 res.status(503).json('Service Unavailable')
-            else
-                res.json(res2)
+            else {
+                if (res2[0] && res2[0].author_id == req.query.author_id) {
+                    res.json([res2[0]])
+                } else {
+                    do {
+                        req.query.uuid = 'urn:uuid:74357528-3935-2740-8282-' // TODO: add this to the .env
+                        req.query.uuid += Math.floor(Math.random() * (999999999999 - 100000000000) + 100000000000)
+                    } while (data.uuidExists(req.query.uuid))
+
+                    data.putManga(req.query.title, req.query.uuid, req.query.author_id, (err, res2) => {
+                        if (err)
+                            res.status(503).json('Service Unavailable')
+                        else
+                            res.json(res2)
+                    })
+                }
+            }
         })
     } else {
         console.log('PUT /manga called (Bad Request)')
