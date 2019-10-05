@@ -9,7 +9,7 @@ class Converter {
                 maxCallsPerWorker: 1,
                 maxConcurrentWorkers: 1,
                 maxRetries: 3,
-                maxCallTime: 45000
+                maxCallTime: 75000
             },
             require.resolve('./converter_for_worker')
         )
