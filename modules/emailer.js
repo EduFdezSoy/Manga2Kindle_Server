@@ -10,13 +10,7 @@ const shell = require('shelljs')
 const dotenv = require('dotenv')
 dotenv.config()
 
-var transporter = nodemailer.createTransport({
-    service: process.env.MAIL_SERVICE,
-    auth: {
-        user: process.env.MAIL_USERNAME,
-        pass: process.env.MAIL_PASSWORD
-    }
-})
+var transporter = generateTransporter()
 
 //#region module public methods
 
@@ -71,6 +65,10 @@ function sendEbook(file, mail_to, callback) {
         }
     }
 
+    if(process.env.MAIL_REPLY_TO && process.env.MAIL_REPLY_TO != "") {
+        mailOptions.replyTo = process.env.MAIL_REPLY_TO
+    }
+
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log('Unable send the email: ' + error)
@@ -106,6 +104,43 @@ function sendEmail(subject, message) {
                 console.log("Email sent: " + info.response)
             }
         })
+    }
+}
+
+/**
+ * Generate the transport object needed to send mails
+ * 
+ * @returns returns a Transport object created by nodemailer.createTransport() 
+ */
+function generateTransporter() {
+    if (process.env.MAIL_SERVICE.toLowerCase() == "gmail") {
+
+        let transporter = nodemailer.createTransport({
+            service: process.env.MAIL_SERVICE,
+            auth: {
+                user: process.env.MAIL_USERNAME,
+                pass: process.env.MAIL_PASSWORD
+            }
+        })
+
+        return transporter
+
+    } else if (process.env.MAIL_SERVICE.toLowerCase() == "smtp") {
+
+        let transporter = nodemailer.createTransport({
+            host: process.env.MAIL_HOST,
+            port: process.env.MAIL_PORT,
+            secure: process.env.MAIL_SECURE,
+            auth: {
+                user: process.env.MAIL_USERNAME,
+                pass: process.env.MAIL_PASSWORD
+            }
+        })
+
+        return transporter
+
+    } else {
+        throw Error("The mail service is not recognised")
     }
 }
 

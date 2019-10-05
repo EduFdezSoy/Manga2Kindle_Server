@@ -1,5 +1,5 @@
 const data = require('../data/data')
-const async_converter = require('../modules/async_converter')
+const async_converter = require('../services/async_converter')
 
 exports.postChapter = (req, res) => {
     // get current date
@@ -65,12 +65,7 @@ exports.postChapter = (req, res) => {
                                 data.setError(id, false, true, "Unable to save to database: " + err, (err, res) => { if (err) console.log(err) })
                             } else {
                                 // launch async converter
-                                try {
-                                    converter.convert(converter_object)
-                                } catch (err) {
-                                    console.log(err)
-                                    data.setError(id, false, true, "Something goes wrong in the worker: " + err, (err, res) => { if (err) console.log(err) })
-                                }
+                                converter.convert(converter_object)
                             }
                         })
 

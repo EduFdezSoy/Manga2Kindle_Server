@@ -1,4 +1,5 @@
 var workerFarm = require('worker-farm')
+const data = require('../data/data')
 
 class Converter {
 
@@ -6,7 +7,9 @@ class Converter {
         this.worker = workerFarm(
             {
                 maxCallsPerWorker: 1,
-                maxConcurrentWorkers: 1
+                maxConcurrentWorkers: 1,
+                maxRetries: 3,
+                maxCallTime: 45000
             },
             require.resolve('./converter_for_worker')
         )
@@ -14,8 +17,13 @@ class Converter {
 
     convert(conv_obj) {
         this.worker(conv_obj, (err, res) => {
-            if (err)
+            if (err) {
                 console.log(err)
+                data.setError(conv_obj.id, false, true, "Error: " + err.message, (err, res) => {
+                    if (err)
+                        console.log(err)
+                })
+            }
         })
     }
 
