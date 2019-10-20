@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS language (
 CREATE TABLE IF NOT EXISTS manga (
     id SERIAL PRIMARY KEY,
     uuid VARCHAR(45) UNIQUE,
-    title VARCHAR(100),
+    title VARCHAR(150),
     author_id INTEGER REFERENCES author(id)
 );
 
