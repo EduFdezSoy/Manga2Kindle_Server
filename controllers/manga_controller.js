@@ -37,9 +37,13 @@ exports.putManga = (req, res) => {
 
         // check if the manga already exists
         data.searchManga(req.query.title, (err, res2) => {
-            if (err)
-                res.status(503).json('Service Unavailable')
-            else {
+            if (err) {
+                let response = {
+                    msg: 'Service Unavailable',
+                    error: err
+                }
+                res.status(503).json(response)
+            } else {
                 if (res2[0] && res2[0].author_id == req.query.author_id) {
                     res.json([res2[0]])
                 } else {
@@ -49,9 +53,13 @@ exports.putManga = (req, res) => {
                     } while (data.uuidExists(req.query.uuid))
 
                     data.putManga(req.query.title, req.query.uuid, req.query.author_id, (err, res2) => {
-                        if (err)
-                            res.status(503).json('Service Unavailable')
-                        else
+                        if (err) {
+                            let response = {
+                                msg: 'Service Unavailable',
+                                error: err
+                            }
+                            res.status(503).json(response)
+                        } else
                             res.json(res2)
                     })
                 }
