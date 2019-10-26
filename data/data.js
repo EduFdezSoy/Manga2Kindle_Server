@@ -159,7 +159,7 @@ exports.putChapter = (manga_id, lang_id, title, volume, chapter, route, checksum
 exports.getStatus = (chapter_id, callback) => {
     if (chapter_id)
         dao.getStatus(chapter_id, (err, res) => {
-            if (res[0]) {
+            if (res || res[0]) {
                 res[0].delivered = parseIntToBools(res[0].delivered)
                 res[0].error = parseIntToBools(res[0].error)
             }
