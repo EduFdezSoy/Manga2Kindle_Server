@@ -41,12 +41,11 @@ This config file is divided in 3 blocks:
 The first one:
 ```
 MASTER_NAME=Manga2Kindle
-VERSION=0.6.2
 PORT=3000
 TEMP_FOLDER=tmp
 DELETE_INPUT=true
 ```
-MASTER_NAME and VERSION are for the app to know the server, you may not change it.  
+MASTER_NAME is the suite name, you may not change it. It won't be displayed anywhere but used as metadata with the version number to make it easier to debug it later.  
 PORT is.. the port where the server will be started.  
 TEMP_FOLDER is used to store the uploads while in queue or being processed.  
 DELETE_INPUT if set to false will save all files uploaded. Useful while debugin.  
