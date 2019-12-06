@@ -1,6 +1,6 @@
-# Manga2Kindle Server
+# Manga2Kindle Server [![ko-fi](https://ko-fi.com/img/Kofi_Logo_Blue.svg)](https://ko-fi.com/EduFdezSoy)
 
-## TODO: Description, Usage, Known Issues, Issues, new features, donations
+## TODO: Description, Usage, Known Issues, Issues, new features
 
 ### Installation
 This installation process was tested on aa fresh Ubuntu 19.04 Server.  
@@ -81,13 +81,16 @@ INFO_MAIL_ENABLED won't send anything right now but in the future we expect the 
 When using *gmail* as MAIL_SERVICE you'll only need MAIL_USERNAME and MAIL_PASSWORD. You'll need to configure your Gmail to be able to conect to.  
 
 That's all you need to do, now you can run the server with:  
-`node app.js`
+`npm start`
 
 ### Dependencies
 - [KCC](https://github.com/ciromattia/kcc) clone that proyect inside this one, may create a folder called _kcc-master_
 - [7z](http://www.7-zip.org/download.html) to work with zips
 - [KindleGen](https://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000765211) in _kindlegen_ directory, to convert epub to mobi
 - Other dependencies: NodeJS 8.11+, Python 3.3+, Pillow 4.0.0+, psutil 5.0.0+, python-slugify 1.2.1+
+
+## Donations
+If you really liked it and feel like I deserve some money, you can buy me a [coffee](https://ko-fi.com/EduFdezSoy) and I'll continue transforming caffeine into code!  
 
 ## Copyright
 Copyright &copy; 2019 Eduardo Fernandez.  
