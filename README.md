@@ -81,7 +81,7 @@ INFO_MAIL_ENABLED won't send anything right now but in the future we expect the 
 When using *gmail* as MAIL_SERVICE you'll only need MAIL_USERNAME and MAIL_PASSWORD. You'll need to configure your Gmail to be able to conect to.  
 
 That's all you need to do, now you can run the server with:  
-`node app.js`
+`npm start`
 
 ### Dependencies
 - [KCC](https://github.com/ciromattia/kcc) clone that proyect inside this one, may create a folder called _kcc-master_
