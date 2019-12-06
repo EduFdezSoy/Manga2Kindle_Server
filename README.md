@@ -1,6 +1,6 @@
-# Manga2Kindle Server
+# Manga2Kindle Server [![ko-fi](https://ko-fi.com/img/Kofi_Logo_Blue.svg)](https://ko-fi.com/EduFdezSoy)
 
-## TODO: Description, Usage, Known Issues, Issues, new features, donations
+## TODO: Description, Usage, Known Issues, Issues, new features
 
 ### Installation
 This installation process was tested on aa fresh Ubuntu 19.04 Server.  
@@ -88,6 +88,9 @@ That's all you need to do, now you can run the server with:
 - [7z](http://www.7-zip.org/download.html) to work with zips
 - [KindleGen](https://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000765211) in _kindlegen_ directory, to convert epub to mobi
 - Other dependencies: NodeJS 8.11+, Python 3.3+, Pillow 4.0.0+, psutil 5.0.0+, python-slugify 1.2.1+
+
+## Donations
+If you really liked it and feel like I deserve some money, you can buy me a [coffee](https://ko-fi.com/EduFdezSoy) and I'll continue transforming caffeine into code!  
 
 ## Copyright
 Copyright &copy; 2019 Eduardo Fernandez.  
