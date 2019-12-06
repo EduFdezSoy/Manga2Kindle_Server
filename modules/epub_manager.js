@@ -162,7 +162,7 @@ function editJson(json, title, serie, chapter, author, author_as, series_identif
     json.package.metadata[0]['dc:title'][0] = title;
     // json.package.metadata[0]['dc:title'][0] = title + " " + chapter;
     json.package.metadata[0]['dc:creator'][0] = { _: author, '$': { 'opf:file-as': author_as, 'opf:role': 'aut' } }
-    json.package.metadata[0]['dc:contributor'][0]['_'] = process.env.MASTER_NAME + " v" + process.env.VERSION
+    json.package.metadata[0]['dc:contributor'][0]['_'] = process.env.MASTER_NAME + " v" + require('../package.json').version
 
     json.package.metadata[0].meta.push({ '$': { property: 'belongs-to-collection', id: 'c01' }, '_': serie })
     json.package.metadata[0].meta.push({ '$': { refines: '#c01', property: 'collection-type' }, '_': 'series' })
