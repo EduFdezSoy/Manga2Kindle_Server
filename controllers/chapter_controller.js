@@ -33,7 +33,7 @@ exports.postChapter = (req, res) => {
                 res.status(503).json('Service Unavailable')
             else {
                 let id = res2[0].id
-
+                req.body.title = res2[0].title
                 // return chapter data
                 res.json(res2)
 
