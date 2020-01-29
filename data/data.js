@@ -51,7 +51,7 @@ exports.putManga = (title, uuid, author_id, callback) => {
     if (!title || !uuid || !author_id)
         callback(new Error("A required param was null"), null)
     else {
-        title = title.trim()
+        title = trimText(title, 150)
         if (title == "")
             callback(new Error("A required param was a white string"), null)
         else
@@ -96,7 +96,7 @@ exports.searchAuthor = (search, callback) => {
     if (!search)
         callback(new Error("A required param was null"), null)
     else {
-        search = search.trim()
+        search = trimSpaces(search)
         dao.searchAuthor(search, callback)
     }
 }
@@ -143,7 +143,7 @@ exports.putChapter = (manga_id, lang_id, title, volume, chapter, route, checksum
     if (!manga_id || !lang_id || !route || !checksum || !mail)
         callback(new Error("A required param was null"), null)
     else {
-        title = title.trim()
+        title = trimText(title, 100)
         mail = mail.trim()
         if (mail == "")
             callback(new Error("A required param was a white string"), null)
@@ -241,6 +241,35 @@ function parseIntToBools(integer) {
         return true
     else
         return false
+}
+
+/**
+ * Removes white spaces from start and end but also removes duplicated spaces in it
+ * 
+ * @param {String} text
+ */
+function trimSpaces(text) {
+    return text.replace(/\s+/g, ' ').trim()
+}
+
+/**
+ * Trim a text to a desired lenght.
+ * If the text lenght is longer than the lenght param it will add ... to the end of the returned string 
+ * 
+ * @param {String} text Text to trim
+ * @param {Number} lenght Trim to this lenght
+ * 
+ * @returns {String} The text trimed to the lenght
+ */
+function trimText(text, lenght) {
+    text = trimSpaces(text)
+    if (text.lenght > lenght) {
+        text = text.substring(0, length - 3)
+        text += "..."
+        return text
+    } else {
+        return text
+    }
 }
 
 //#endregion
