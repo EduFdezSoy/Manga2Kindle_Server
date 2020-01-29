@@ -253,17 +253,17 @@ function trimSpaces(text) {
 }
 
 /**
- * Trim a text to a desired lenght.
- * If the text lenght is longer than the lenght param it will add ... to the end of the returned string 
+ * Trim a text to a desired length.
+ * If the text length is longer than the length param it will add ... to the end of the returned string 
  * 
  * @param {String} text Text to trim
- * @param {Number} lenght Trim to this lenght
+ * @param {Number} length Trim to this length
  * 
- * @returns {String} The text trimed to the lenght
+ * @returns {String} The text trimed to the length
  */
-function trimText(text, lenght) {
+function trimText(text, length) {
     text = trimSpaces(text)
-    if (text.lenght > lenght) {
+    if (text.length > length) {
         text = text.substring(0, length - 3)
         text += "..."
         return text
