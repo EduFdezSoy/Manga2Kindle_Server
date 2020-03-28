@@ -13,30 +13,30 @@ const shell = require('shelljs')
  * @param {Function} callback err or null
  */
 exports.FolderToEpub = function (folderName, callback) {
-    var comand = "kcc-master/kcc-c2e.py -p KV -m -2 -u -r 0 -f EPUB " + folderName
+  var comand = 'kcc-master/kcc-c2e.py -p KV -m -2 -u -r 0 -f EPUB ' + folderName
 
-    if (shell.exec(comand).code !== 0) {
-        shell.exit(1)
-        callback('kcc: conversion to epub failed')
-    } else {
-        callback(null)
-    }
+  if (shell.exec(comand).code !== 0) {
+    shell.exit(1)
+    callback('kcc: conversion to epub failed')
+  } else {
+    callback(null)
+  }
 }
 
 /**
  * Converts the epub to mobi, it needs KindleGen to be installed in the right folder
- * @param {String} file 
+ * @param {String} file
  * @param {Function} callback err or null
  */
 exports.EpubToMobi = function (file, callback) {
-    // TODO: check if kindlegen is "installed"
-    var comand = "kindlegen/kindlegen -dont_append_source -locale en \"" + __dirname + "/../output/" + file + "\""
-    if (shell.exec(comand).code !== 0) {
-        shell.exit(1)
-        callback('kindlegen conversion failed')
-    } else {
-        callback(null)
-    }
-    console.log('deleting epub')
-    shell.rm('-rf', __dirname + "/../output/" + file)
+  // TODO: check if kindlegen is "installed"
+  var comand = 'kindlegen/kindlegen -dont_append_source -locale en "' + __dirname + '/../output/' + file + '"'
+  if (shell.exec(comand).code !== 0) {
+    shell.exit(1)
+    callback('kindlegen conversion failed')
+  } else {
+    callback(null)
+  }
+  console.log('deleting epub')
+  shell.rm('-rf', __dirname + '/../output/' + file)
 }
