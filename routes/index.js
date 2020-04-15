@@ -8,34 +8,34 @@ module.exports = function (app) {
     app.get('/', (req, res) => res.json(process.env.MASTER_NAME + ' v' + require('../package.json').version))
 
     app.get('/hello', (req, res) => res.json({
-    name: process.env.MASTER_NAME,
-    version: require('../package.json').version
+        'name' : process.env.MASTER_NAME,
+        'version' : require('../package.json').version
     }))
 
-  // #region MANGA ROUTES
+    //#region MANGA ROUTES
 
     app.route('/manga')
         .get(manga.getManga)
         .put(manga.putManga)
 
-  // #endregion
+    //#endregion
 
-  // #region CHAPTER ROUTES
+    //#region CHAPTER ROUTES
 
     app.route('/manga/chapter')
         .post(chapter.postChapter)
 
-  // #endregion
+    //#endregion
 
-  // #region AUTHOR ROUTES
+    //#region AUTHOR ROUTES
 
     app.route('/author')
         .get(authors.getAuthor)
         .put(authors.putAuthor)
 
-  // #endregion
+    //#endregion
 
-  // status
+    //status
 
     app.route('/status')
         .get(status.getStatus)
