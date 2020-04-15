@@ -1,6 +1,6 @@
 {
   "name": "manga2kindle_api",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -11,14 +11,14 @@
   "license": "unlicensed",
   "dependencies": {
     "adm-zip": "^0.4.14",
-    "archiver": "^3.0.0",
+    "archiver": "^4.0.1",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6",
     "nodemailer": "^6.4.6",
     "path": "^0.12.7",
-    "pg": "^7.18.2",
+    "pg": "^8.0.2",
     "shelljs": "^0.8.3",
     "standard": "^14.3.3",
     "worker-farm": "^1.7.0",
