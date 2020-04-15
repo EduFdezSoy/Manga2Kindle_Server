@@ -48,16 +48,17 @@ exports.postChapter = (req, res) => {
                     } else {
                         console.log('copied ' + req.body.route)
 
-                        let converter = new async_converter().getInstance()
-                        let converter_object = converter.formConvObject(
-                            id,
-                            req.body.manga_id,
-                            req.body.chapter,
-                            req.body.volume,
-                            req.body.title,
-                            req.body.route,
-                            req.body.mail
-                        )
+            const converter = new async_converter().getInstance()
+            const converter_object = converter.formConvObject(
+              id,
+              req.body.manga_id,
+              req.body.chapter,
+              req.body.volume,
+              req.body.title,
+              req.body.route,
+              req.body.mail,
+              JSON.parse(req.body.options ? req.body.options : '{}')
+            )
 
                         data.setStatus(id, false, false, null, (err, res) => {
                             if (err) {
