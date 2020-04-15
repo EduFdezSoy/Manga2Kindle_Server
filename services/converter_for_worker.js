@@ -8,7 +8,7 @@ const emailer = require('../modules/emailer')
  */
 module.exports = function (ob, callback) {
   // convert file to epub
-  converter.FolderToEpub(ob.route, (err) => {
+  converter.FolderToEpub(ob.route, ob.options, (err) => {
     if (err) {
       ifError(ob.id, err, callback, "Can't convert to Epub")
     } else {
@@ -44,7 +44,7 @@ module.exports = function (ob, callback) {
                         } else {
                           const status = res_mail.response.substring(0, 2)
 
-                          if (status === 25) {
+                          if (status === '25') {
                             data.setError(ob.id, true, false, null, (err, res) => {
                               if (err) { console.log(err) }
 
