@@ -57,7 +57,8 @@ exports.postChapter = (req, res) => {
               req.body.volume,
               req.body.title,
               req.body.route,
-              req.body.mail
+              req.body.mail,
+              JSON.parse(req.body.options)
             )
 
             data.setStatus(id, false, false, null, (err, res) => {

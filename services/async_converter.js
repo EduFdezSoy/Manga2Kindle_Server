@@ -27,7 +27,7 @@ class Converter {
     })
   }
 
-  formConvObject (id, manga_id, chapter, volume, title, route, mail) {
+  formConvObject (id, manga_id, chapter, volume, title, route, mail, options = null) {
     const ob = {
       id: id,
       manga_id: manga_id,
@@ -35,7 +35,8 @@ class Converter {
       volume: volume,
       title: title,
       route: route,
-      mail: mail
+      mail: mail,
+      options: options
     }
 
     return ob

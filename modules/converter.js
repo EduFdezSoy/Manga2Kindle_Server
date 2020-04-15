@@ -10,10 +10,32 @@ const shell = require('shelljs')
 /**
  * TODO: write documentation
  * TODO: let the user put some options (device, 4panel...)
+ * @param {String} folderName string to folder
+ * @param {Array} options can be null (will pick default values)
  * @param {Function} callback err or null
  */
-exports.FolderToEpub = function (folderName, callback) {
-  var comand = 'kcc-master/kcc-c2e.py -p KV -m -2 -u -r 0 -f EPUB ' + folderName
+exports.FolderToEpub = function (folderName, options, callback) {
+  var style = 'manga' // can be manga, webtoon or comic (others = comic)
+  var splitter = 0 // double page parsing mode. 0: Split 1: Rotate 2: Both
+
+  if (options) {
+    style = options.style ? options.style : style
+    splitter = options.splitter ? options.splitter : splitter
+  }
+
+  var comand = 'kcc-master/kcc-c2e.py -p KV'
+
+  switch (style) {
+    case 'manga':
+      comand += ' -m'
+      break
+
+    case 'webtoon':
+      comand += ' -w'
+      break
+  }
+
+  comand += ' -2 -u -r ' + splitter + ' -f EPUB ' + folderName
 
   if (shell.exec(comand).code !== 0) {
     shell.exit(1)
