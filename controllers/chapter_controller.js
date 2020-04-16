@@ -20,8 +20,10 @@ exports.postChapter = (req, res) => {
   req.body.title = req.body.title.substring(1, req.body.title.length - 1)
   req.body.mail = req.body.mail.substring(1, req.body.mail.length - 1)
 
-  // check integrity
-  if (req.files.file.md5 !== req.body.checksum) {
+  // we no longer check the integrity
+  // TODO: check file size
+  // TODO: remove all references to the checksum
+  if (false) { // req.files.file.md5 !== req.body.checksum
     console.log('POST /manga/chapter called (Bad Request)')
     res.status(400).json('Bad Request, checksum mismatch')
   } else {
