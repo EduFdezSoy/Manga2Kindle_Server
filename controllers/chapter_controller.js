@@ -1,19 +1,26 @@
 const data = require('../data/data')
 const AsyncConverter = require('../services/async_converter')
+const path = require('path')
 
 exports.postChapter = (req, res) => {
   // get current date
-  let today = new Date()
+  const today = new Date()
   const dd = String(today.getDate()).padStart(2, '0')
   const mm = String(today.getMonth() + 1).padStart(2, '0')
   const yyyy = today.getFullYear()
-  today = '[' + dd + '-' + mm + '-' + yyyy + ']'
+  const hours = String(today.getHours()).padStart(2, '0')
+  const min = String(today.getMinutes()).padStart(2, '0')
+  const sec = String(today.getSeconds()).padStart(2, '0')
+
+  // format datetime
+  const datetime = '[' + yyyy + '-' + mm + '-' + dd + '_' + hours + ':' + min + ':' + sec + ']'
 
   // set a random to avoid any rewrite
   const random = Math.floor(Math.random() * (999 - 100 + 1) + 100)
 
   // form the path and name
-  req.body.route = __dirname + '/../files/' + today + '_' + req.files.file.md5.substring(0, 7) + '_' + random + '.zip' // eslint-disable-line no-path-concat
+  const filename = datetime + '_' + random + '.zip'
+  req.body.route = path.join(__dirname, '/../files/', filename)
 
   // for some reason I can see right now the title and the mail to comes between ""
   req.body.title = req.body.title.substring(1, req.body.title.length - 1)
