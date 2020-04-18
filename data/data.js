@@ -47,17 +47,17 @@ exports.searchManga = (search, callback) => {
  *
  * @param {String} title
  * @param {String} uuid
- * @param {Number} author_id
+ * @param {Number} authorId
  */
-exports.putManga = (title, uuid, author_id, callback) => {
-  if (!title || !uuid || !author_id) {
+exports.putManga = (title, uuid, authorId, callback) => {
+  if (!title || !uuid || !authorId) {
     callback(new Error('A required param was null'), null)
   } else {
     title = trimText(title, 150)
-    if (title == '') {
+    if (title === '') {
       callback(new Error('A required param was a white string'), null)
     } else {
-      dao.addManga(title, uuid, author_id, callback)
+      dao.addManga(title, uuid, authorId, callback)
     }
   }
 }
@@ -86,8 +86,7 @@ exports.getAuthors = (limit = 100, callback) => {
  */
 exports.getAuthor = (id, callback) => {
   if (!id) {
-    c
-    allback(new Error('A required param was null'), null)
+    callback(new Error('A required param was null'), null)
   } else {
     dao.getAuthor(id, callback)
   }
@@ -138,8 +137,8 @@ exports.putAuthor = (name, surname, nickname, callback) => {
 
 /**
  *
- * @param {Number} manga_id
- * @param {Number} lang_id
+ * @param {Number} mangaId
+ * @param {Number} langId
  * @param {String} title
  * @param {Number} volume
  * @param {Number} chapter
@@ -147,16 +146,16 @@ exports.putAuthor = (name, surname, nickname, callback) => {
  * @param {String} mail
  * @param {Function} callback
  */
-exports.putChapter = (manga_id, lang_id, title, volume, chapter, route, mail, callback) => {
-  if (!manga_id || !lang_id || !route || !mail) {
+exports.putChapter = (mangaId, langId, title, volume, chapter, route, mail, callback) => {
+  if (!mangaId || !langId || !route || !mail) {
     callback(new Error('A required param was null'), null)
   } else {
     title = trimText(title, 100)
     mail = mail.trim()
-    if (mail == '') {
+    if (mail === '') {
       callback(new Error('A required param was a white string'), null)
     } else {
-      dao.putChapter(manga_id, lang_id, title, volume, chapter, route, mail, callback)
+      dao.putChapter(mangaId, langId, title, volume, chapter, route, mail, callback)
     }
   }
 }
@@ -165,9 +164,9 @@ exports.putChapter = (manga_id, lang_id, title, volume, chapter, route, mail, ca
 
 // #region status
 
-exports.getStatus = (chapter_id, callback) => {
-  if (chapter_id) {
-    dao.getStatus(chapter_id, (err, res) => {
+exports.getStatus = (chapterId, callback) => {
+  if (chapterId) {
+    dao.getStatus(chapterId, (err, res) => {
       if (res && res[0]) {
         res[0].delivered = parseIntToBools(res[0].delivered)
         res[0].error = parseIntToBools(res[0].error)
@@ -179,25 +178,25 @@ exports.getStatus = (chapter_id, callback) => {
   }
 }
 
-exports.setStatus = (chapter_id, delivered = false, error = false, reason, callback) => {
+exports.setStatus = (chapterId, delivered = false, error = false, reason, callback) => {
   delivered = parseBools(delivered)
   error = parseBools(error)
 
-  dao.setStatus(chapter_id, delivered, error, reason, callback)
+  dao.setStatus(chapterId, delivered, error, reason, callback)
 }
 
-exports.setError = (chapter_id, delivered = false, error = false, reason, callback) => {
+exports.setError = (chapterId, delivered = false, error = false, reason, callback) => {
   delivered = parseBools(delivered)
   error = parseBools(error)
 
-  this.getStatus(chapter_id, (err, res) => {
+  this.getStatus(chapterId, (err, res) => {
     if (err) {
       callback(500, null)
     } else
     if (res[0] != null) {
-      dao.editStatus(chapter_id, delivered, error, reason, callback)
+      dao.editStatus(chapterId, delivered, error, reason, callback)
     } else {
-      dao.setStatus(chapter_id, delivered, error, reason, callback)
+      dao.setStatus(chapterId, delivered, error, reason, callback)
     }
   })
 }
@@ -215,7 +214,7 @@ exports.uuidExists = (uuid) => {
     if (err) {
       return true
     } else
-    if (res[0].count == 0) {
+    if (res[0].count === 0) {
       return false
     } else {
       return true
@@ -250,7 +249,7 @@ function parseBools (boolean) {
  */
 // NOTE: booleans 0 = false, 1 = true
 function parseIntToBools (integer) {
-  if (integer == 1) {
+  if (integer === 1) {
     return true
   } else {
     return false

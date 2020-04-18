@@ -62,9 +62,9 @@ exports.putAuthor = (req, res) => {
     data.searchAuthor(req.query.name, (err, res2) => {
       if (!err) {
         res2.some(author => {
-          if (author.name.toUpperCase() == req.query.name.toUpperCase() &&
-                        author.surname.toUpperCase() == req.query.surname.toUpperCase() &&
-                        author.nickname.toUpperCase() == req.query.nickname.toUpperCase()) {
+          if (author.name.toUpperCase() === req.query.name.toUpperCase() &&
+                        author.surname.toUpperCase() === req.query.surname.toUpperCase() &&
+                        author.nickname.toUpperCase() === req.query.nickname.toUpperCase()) {
             result = [author]
             return true
           }
@@ -75,9 +75,9 @@ exports.putAuthor = (req, res) => {
         data.searchAuthor(req.query.surname, (err, res2) => {
           if (!err) {
             res2.some(author => {
-              if (author.name.toUpperCase() == req.query.name.toUpperCase() &&
-                                author.surname.toUpperCase() == req.query.surname.toUpperCase() &&
-                                author.nickname.toUpperCase() == req.query.nickname.toUpperCase()) {
+              if (author.name.toUpperCase() === req.query.name.toUpperCase() &&
+                                author.surname.toUpperCase() === req.query.surname.toUpperCase() &&
+                                author.nickname.toUpperCase() === req.query.nickname.toUpperCase()) {
                 result = [author]
                 return true
               }
@@ -88,9 +88,9 @@ exports.putAuthor = (req, res) => {
             data.searchAuthor(req.query.nickname, (err, res2) => {
               if (!err) {
                 res2.some(author => {
-                  if (author.name.toUpperCase() == req.query.name.toUpperCase() &&
-                                        author.surname.toUpperCase() == req.query.surname.toUpperCase() &&
-                                        author.nickname.toUpperCase() == req.query.nickname.toUpperCase()) {
+                  if (author.name.toUpperCase() === req.query.name.toUpperCase() &&
+                                        author.surname.toUpperCase() === req.query.surname.toUpperCase() &&
+                                        author.nickname.toUpperCase() === req.query.nickname.toUpperCase()) {
                     result = [author]
                     return true
                   }

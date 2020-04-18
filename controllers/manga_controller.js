@@ -47,7 +47,7 @@ exports.putManga = (req, res) => {
         }
         res.status(503).json(response)
       } else {
-        if (res2[0] && res2[0].author_id == req.query.author_id) {
+        if (res2[0] && res2[0].author_id === req.query.author_id) {
           res.json([res2[0]])
         } else {
           do {

@@ -18,16 +18,16 @@ var transporter = generateTransporter()
  * TODO: write method documentation
  *
  * @param {String} file
- * @param {String} mail_to
+ * @param {String} mailTo
  * @param {Function} callback optional (err, res)
  */
-exports.sendFile = function (file, mail_to, callback = null) {
+exports.sendFile = function (file, mailTo, callback = null) {
   if (callback == null) {
-    sendEbook(file, mail_to, () => {
+    sendEbook(file, mailTo, () => {
       console.log('file sended.')
     })
   } else {
-    sendEbook(file, mail_to, callback)
+    sendEbook(file, mailTo, callback)
   }
 }
 
@@ -50,13 +50,13 @@ exports.sendErrorMail = function (msg, err) {
  * TODO: write method documentation
  *
  * @param {String} file
- * @param {String} mail_to
+ * @param {String} mailTo
  * @param {Function} callback (err, res)
  */
-function sendEbook (file, mail_to, callback) {
+function sendEbook (file, mailTo, callback) {
   var mailOptions = {
     from: process.env.MAIL_SENDER,
-    to: mail_to,
+    to: mailTo,
     subject: '[Manga2Kindle] Here is your Manga!',
     text: "I'm here again to deliver your manga!\n You will find it attached to this email.\n -- The Manga2Kindle Bot",
     html: "Hey there!<br><br>I'm here again to deliver your manga!<br>You can find it attached to this email.<br><br> <i>Bop Bee Boo,</i><br>The Manga2Kindle Bot",
@@ -65,7 +65,7 @@ function sendEbook (file, mail_to, callback) {
     }
   }
 
-  if (process.env.MAIL_REPLY_TO && process.env.MAIL_REPLY_TO != '') {
+  if (process.env.MAIL_REPLY_TO && process.env.MAIL_REPLY_TO !== '') {
     mailOptions.replyTo = process.env.MAIL_REPLY_TO
   }
 
@@ -113,7 +113,7 @@ function sendEmail (subject, message) {
  * @returns returns a Transport object created by nodemailer.createTransport()
  */
 function generateTransporter () {
-  if (process.env.MAIL_SERVICE.toLowerCase() == 'gmail') {
+  if (process.env.MAIL_SERVICE.toLowerCase() === 'gmail') {
     const transporter = nodemailer.createTransport({
       service: process.env.MAIL_SERVICE,
       auth: {
@@ -123,7 +123,7 @@ function generateTransporter () {
     })
 
     return transporter
-  } else if (process.env.MAIL_SERVICE.toLowerCase() == 'smtp') {
+  } else if (process.env.MAIL_SERVICE.toLowerCase() === 'smtp') {
     const transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: process.env.MAIL_PORT,

@@ -43,8 +43,8 @@ exports.searchManga = (search, callback) => {
   })
 }
 
-exports.addManga = (title, uuid, author_id, callback) => {
-  pool.query('INSERT INTO manga(title, uuid, author_id) VALUES ($1, $2, $3) RETURNING id, title, uuid, author_id', [title, uuid, author_id], (err, res) => {
+exports.addManga = (title, uuid, authorId, callback) => {
+  pool.query('INSERT INTO manga(title, uuid, author_id) VALUES ($1, $2, $3) RETURNING id, title, uuid, author_id', [title, uuid, authorId], (err, res) => {
     if (err) {
       callback(err.stack, null)
     } else {
@@ -107,9 +107,9 @@ exports.addAuthor = (name, surname, nickname, callback) => {
 
 // #region chapters methods
 
-exports.putChapter = (manga_id, lang_id, title, volume, chapter, route, mail, callback) => {
+exports.putChapter = (mangaId, langId, title, volume, chapter, route, mail, callback) => {
   pool.query('INSERT INTO chapter(manga_id, lang_id, volume, chapter, title, file_path, mail) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, manga_id, lang_id, volume, chapter, title',
-    [manga_id, lang_id, volume, chapter, title, route, mail], (err, res) => {
+    [mangaId, langId, volume, chapter, title, route, mail], (err, res) => {
       if (err) {
         callback(err.stack, null)
       } else {

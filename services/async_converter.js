@@ -14,21 +14,21 @@ class Converter {
     )
   }
 
-  convert (conv_obj) {
-    this.worker(conv_obj, (err, res) => {
+  convert (convObj) {
+    this.worker(convObj, (err, res) => {
       if (err) {
         console.log(err)
-        data.setError(conv_obj.id, false, true, 'Error: ' + err.message, (err, res) => {
+        data.setError(convObj.id, false, true, 'Error: ' + err.message, (err, res) => {
           if (err) { console.log(err) }
         })
       }
     })
   }
 
-  formConvObject (id, manga_id, chapter, volume, title, route, mail, options = null) {
+  formConvObject (id, mangaId, chapter, volume, title, route, mail, options = null) {
     const ob = {
       id: id,
-      manga_id: manga_id,
+      manga_id: mangaId,
       chapter: chapter,
       volume: volume,
       title: title,
