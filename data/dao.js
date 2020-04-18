@@ -101,7 +101,7 @@ exports.addAuthor = (name, surname, nickname, callback) => {
 //#region chapters methods
 
 exports.putChapter = (manga_id, lang_id, title, volume, chapter, route, mail, callback) => {
-    pool.query('INSERT INTO chapter(manga_id, lang_id, volume, chapter, title, file_path, mail) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, manga_id, lang_id, volume, chapter, title',
+    pool.query('INSERT INTO chapter(manga_id, lang_id, volume, chapter, title, file_path, mail) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, manga_id, lang_id, volume, chapter, title',
         [manga_id, lang_id, volume, chapter, title, route, mail], (err, res) => {
             if (err)
                 callback(err.stack, null)
