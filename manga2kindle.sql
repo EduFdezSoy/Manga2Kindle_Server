@@ -40,7 +40,6 @@ CREATE TABLE IF NOT EXISTS chapter (
     chapter FLOAT,
     title VARCHAR(100),
     file_path VARCHAR(500),
-    checksum VARCHAR(32),
     mail VARCHAR(100)
 );
 

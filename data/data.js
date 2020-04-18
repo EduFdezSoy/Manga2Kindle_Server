@@ -135,12 +135,11 @@ exports.putAuthor = (name, surname, nickname, callback) => {
  * @param {Number} volume
  * @param {Number} chapter
  * @param {String} route
- * @param {String} checksum
  * @param {String} mail
  * @param {Function} callback
  */
-exports.putChapter = (manga_id, lang_id, title, volume, chapter, route, checksum, mail, callback) => {
-    if (!manga_id || !lang_id || !route || !checksum || !mail)
+exports.putChapter = (manga_id, lang_id, title, volume, chapter, route, mail, callback) => {
+    if (!manga_id || !lang_id || !route || !mail)
         callback(new Error("A required param was null"), null)
     else {
         title = trimText(title, 100)
@@ -148,7 +147,7 @@ exports.putChapter = (manga_id, lang_id, title, volume, chapter, route, checksum
         if (mail == "")
             callback(new Error("A required param was a white string"), null)
         else
-            dao.putChapter(manga_id, lang_id, title, volume, chapter, route, checksum, mail, callback)
+            dao.putChapter(manga_id, lang_id, title, volume, chapter, route, mail, callback)
     }
 }
 
