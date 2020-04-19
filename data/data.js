@@ -174,7 +174,7 @@ exports.getStatus = (chapterId, callback) => {
       callback(err, res)
     })
   } else {
-    callback(400, null)
+    callback(new Error('400'), null)
   }
 }
 
@@ -191,9 +191,8 @@ exports.setError = (chapterId, delivered = false, error = false, reason, callbac
 
   this.getStatus(chapterId, (err, res) => {
     if (err) {
-      callback(500, null)
-    } else
-    if (res[0] != null) {
+      callback(new Error('500'), null)
+    } else if (res[0] != null) {
       dao.editStatus(chapterId, delivered, error, reason, callback)
     } else {
       dao.setStatus(chapterId, delivered, error, reason, callback)

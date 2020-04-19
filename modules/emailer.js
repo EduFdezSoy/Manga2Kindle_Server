@@ -19,7 +19,7 @@ var transporter = generateTransporter()
  *
  * @param {String} file
  * @param {String} mailTo
- * @param {Function} callback optional (err, res)
+ * @param {Function} callback optional (Error, res)
  */
 exports.sendFile = function (file, mailTo, callback = null) {
   if (callback == null) {
@@ -35,7 +35,7 @@ exports.sendFile = function (file, mailTo, callback = null) {
  * TODO: write method documentation
  *
  * @param {String} msg
- * @param {String} err
+ * @param {Error} err
  */
 exports.sendErrorMail = function (msg, err) {
   msg = msg + '\n\n' + err.stack

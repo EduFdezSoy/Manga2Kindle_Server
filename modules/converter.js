@@ -13,7 +13,7 @@ const path = require('path')
  * TODO: let the user put some options (device, 4panel...)
  * @param {String} folderName string to folder
  * @param {Array} options can be null (will pick default values)
- * @param {Function} callback err or null
+ * @param {Function} callback Error or null
  */
 exports.FolderToEpub = function (folderName, options, callback) {
   let style = 'manga' // can be manga, webtoon or comic (others = comic)
@@ -40,7 +40,7 @@ exports.FolderToEpub = function (folderName, options, callback) {
 
   if (shell.exec(comand).code !== 0) {
     shell.exit(1)
-    callback('kcc: conversion to epub failed')
+    callback(new Error('kcc: conversion to epub failed'))
   } else {
     callback(null)
   }
@@ -49,7 +49,7 @@ exports.FolderToEpub = function (folderName, options, callback) {
 /**
  * Converts the epub to mobi, it needs KindleGen to be installed in the right folder
  * @param {String} file
- * @param {Function} callback err or null
+ * @param {Function} callback Error or null
  */
 exports.EpubToMobi = function (file, callback) {
   // TODO: check if kindlegen is "installed"
@@ -57,7 +57,7 @@ exports.EpubToMobi = function (file, callback) {
   const comand = 'kindlegen/kindlegen -dont_append_source -locale en "' + filePath + '"'
   if (shell.exec(comand).code !== 0) {
     shell.exit(1)
-    callback('kindlegen conversion failed')
+    callback(new Error('kindlegen conversion failed'))
   } else {
     callback(null)
   }

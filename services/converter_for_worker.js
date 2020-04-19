@@ -81,10 +81,17 @@ module.exports = function (ob, callback) {
 
 // #region private functions
 
+/**
+ * This function logs the error
+ * @param {Number} chapterId chapter's id
+ * @param {Error} err Error
+ * @param {Function} callback callback function (reason, res)
+ * @param {String} msg message
+ */
 function ifError (chapterId, err, callback, msg = 'Error') {
   console.log(err)
 
-  const reason = msg + ': ' + err
+  const reason = msg + ': ' + err.message
   data.setError(chapterId, false, true, reason, (err, res) => {
     if (err) {
       console.log(err)

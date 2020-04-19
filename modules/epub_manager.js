@@ -158,7 +158,7 @@ function parseOEBPS (epubName, callback) {
  */
 function editJson (json, title, serie, chapter, author, authorAs, seriesIdentifier) {
   if (json == null) {
-    throw ('JSON is undefined')
+    throw (new Error('JSON is undefined'))
   }
 
   // json.package.metadata[0]['dc:title'][0] = title + " - " + json.package.metadata[0]['dc:title'][0]
