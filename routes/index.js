@@ -12,30 +12,30 @@ module.exports = function (app) {
     version: require('../package.json').version
   }))
 
-    //#region MANGA ROUTES
+  // #region MANGA ROUTES
 
   app.route('/manga')
     .get(manga.getManga)
     .put(manga.putManga)
 
-    //#endregion
+  // #endregion
 
-    //#region CHAPTER ROUTES
+  // #region CHAPTER ROUTES
 
   app.route('/manga/chapter')
     .post(chapter.postChapter)
 
-    //#endregion
+  // #endregion
 
-    //#region AUTHOR ROUTES
+  // #region AUTHOR ROUTES
 
   app.route('/author')
     .get(authors.getAuthor)
     .put(authors.putAuthor)
 
-    //#endregion
+  // #endregion
 
-    //status
+  // status
 
   app.route('/status')
     .get(status.getStatus)
