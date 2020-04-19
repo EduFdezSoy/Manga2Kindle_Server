@@ -17,12 +17,12 @@ dotenv.config()
 const port = process.env.PORT || 3000
 
 // we want to create one and only instance of this, so we create it here and the others calls must be always the same
-const converter = new AsyncConverter().getInstance()
+new AsyncConverter().getInstance()
 
 app.listen(port, () => console.log(`Manga2kindle server v${require('./package.json').version} listening on port ${port}!`))
 
 var jsonParser = bodyParser.json()
-var urlencodedParser = bodyParser.urlencoded({ extended: false, limit: '50mb' })
+// var urlencodedParser = bodyParser.urlencoded({ extended: false, limit: '50mb' })
 app.use(jsonParser)
 
 app.use(fileupload({
