@@ -24,7 +24,7 @@ exports.FolderToEpub = function (folderName, options, callback) {
 
   if (options) {
     style = options.style ? options.style : style
-    splitter = options.splitter ? options.splitter : splitter
+    splitter = Number.isInteger(options.splitter) ? options.splitter : splitter
   }
 
   let comand = 'kcc-master/kcc-c2e.py -p KV'
