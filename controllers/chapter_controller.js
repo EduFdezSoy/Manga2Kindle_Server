@@ -72,8 +72,6 @@ exports.postChapter = (req, res) => {
             JSON.parse(req.body.options)
           )
 
-          console.log(converterObject.options)
-
           data.setStatus(id, false, false, null, (err, res) => {
             if (err) {
               console.log(err)
