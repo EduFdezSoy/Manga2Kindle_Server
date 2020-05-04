@@ -19,6 +19,9 @@ exports.FolderToEpub = function (folderName, options, callback) {
   let style = 'manga' // can be manga, webtoon or comic (others = comic)
   let splitter = 0 // double page parsing mode. 0: Split 1: Rotate 2: Both
 
+  // escape spaces in the path
+  folderName = folderName.replace(/(\s+)/g, '\\$1')
+
   if (options) {
     style = options.style ? options.style : style
     splitter = options.splitter ? options.splitter : splitter
