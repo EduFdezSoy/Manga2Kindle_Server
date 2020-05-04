@@ -22,9 +22,18 @@ exports.postChapter = (req, res) => {
   const filename = datetime + '_' + random + '.zip'
   req.body.route = path.join(__dirname, '/../files/', filename)
 
-  // for some reason I can see right now the title and the mail to comes between ""
+  // for some reason all strings comes between ""
   req.body.title = req.body.title.substring(1, req.body.title.length - 1)
   req.body.mail = req.body.mail.substring(1, req.body.mail.length - 1)
+
+  if (req.body.options != null) {
+    // all strings comes between ""
+    req.body.options = req.body.options.substring(1, req.body.options.length - 1)
+    // need to replace " in the options since it is a string
+    req.body.options = req.body.options.replace(/\\"/g, '"')
+  } else {
+    req.body.options = '{}'
+  }
 
   // TODO: check file size
   console.log('POST /manga/chapter called')
@@ -60,7 +69,7 @@ exports.postChapter = (req, res) => {
             req.body.title,
             req.body.route,
             req.body.mail,
-            JSON.parse(req.body.options ? req.body.options : '{}')
+            JSON.parse(req.body.options)
           )
 
           data.setStatus(id, false, false, null, (err, res) => {
