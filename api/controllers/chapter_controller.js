@@ -20,7 +20,7 @@ exports.postChapter = (req, res) => {
 
   // form the path and name
   const filename = datetime + '_' + random + '.zip'
-  req.body.route = path.join(__dirname, '/../files/', filename)
+  req.body.route = path.join(__dirname, '/../../files/', filename)
 
   // for some reason all strings comes between ""
   req.body.title = req.body.title.substring(1, req.body.title.length - 1)

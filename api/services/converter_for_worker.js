@@ -1,8 +1,8 @@
 const path = require('path')
 const data = require('../data/data')
-const converter = require('../modules/converter')
-const epubManager = require('../modules/epub_manager')
-const emailer = require('../modules/emailer')
+const converter = require('../utils/converter')
+const epubManager = require('../utils/epub_manager')
+const emailer = require('../utils/emailer')
 
 /**
  * @param {Object} ob object formed with Converter.formConvObject()

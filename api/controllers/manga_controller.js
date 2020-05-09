@@ -22,8 +22,6 @@ exports.getManga = (req, res) => {
       }
     })
   } else {
-    console.log('GET /manga called')
-
     data.getMangas(null, (err, res2) => {
       if (err) {
         res.status(503).json('Service Unavailable')
