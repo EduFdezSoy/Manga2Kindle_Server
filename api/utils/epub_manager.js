@@ -6,7 +6,7 @@
 
 const fs = require('fs')
 const path = require('path')
-const shell = require('shelljs')
+const rm = require('../utils/rm')
 const AdmZip = require('adm-zip')
 const archiver = require('archiver')
 const xml2js = require('xml2js')
@@ -245,7 +245,7 @@ function deleteTempFiles (epubName, finalName, callback) {
 
   console.log('deleting epub file')
   comand = epubName
-  shell.rm('-rf', comand)
+  rm.rmrf(comand)
 
   // check if the epubName has the extension on it
   if (epubName.endsWith('.epub')) {
@@ -257,15 +257,15 @@ function deleteTempFiles (epubName, finalName, callback) {
   if (process.env.DELETE_INPUT) {
     console.log('deleting zip file')
     comand = name + '.zip'
-    shell.rm('-rf', comand)
+    rm.rmrf(comand)
   }
 
   // cut epub path to only get the name
   name = name.substring(name.lastIndexOf('/') + 1)
 
   console.log('deleting unziped files')
-  const filePath = path.join(__dirname, '/../', process.env.TEMP_FOLDER, '/unziped_' + name)
-  shell.rm('-rf', filePath)
+  const filePath = path.join(__dirname, '/../../', process.env.TEMP_FOLDER, '/unziped_' + name)
+  rm.rmrf(filePath)
 
   callback(null, finalName)
 }

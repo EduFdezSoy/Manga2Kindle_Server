@@ -6,7 +6,7 @@
  */
 
 const nodemailer = require('nodemailer')
-const shell = require('shelljs')
+const rm = require('../utils/rm')
 const dotenv = require('dotenv')
 dotenv.config()
 
@@ -75,9 +75,15 @@ function sendEbook (file, mailTo, callback) {
       callback(error, null)
     }
 
-    shell.rm('-rf', file)
-    console.log('Email sent: ' + info.response + ' - file deleted (' + file + ')')
-    callback(null, info)
+    rm.rmrf(file)
+      .then(res => {
+        console.log('Email sent: ' + info.response + ' - file deleted (' + file + ')')
+        callback(error, info)
+      })
+      .catch(err => {
+        console.error(err)
+        callback(err, null)
+      })
   })
 }
 
