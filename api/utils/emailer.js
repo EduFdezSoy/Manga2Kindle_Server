@@ -21,14 +21,17 @@ var transporter = generateTransporter()
  * @param {String} mailTo
  * @param {Function} callback optional (Error, res)
  */
-exports.sendFile = function (file, mailTo, callback = null) {
-  if (callback == null) {
-    sendEbook(file, mailTo, () => {
+exports.sendFile = function (file, mailTo) {
+  return new Promise((resolve, reject) => {
+    sendEbook(file, mailTo, (err, res) => {
+      if (err) {
+        reject(err)
+        return
+      }
+      resolve(res)
       console.log('file sended.')
     })
-  } else {
-    sendEbook(file, mailTo, callback)
-  }
+  })
 }
 
 /**
