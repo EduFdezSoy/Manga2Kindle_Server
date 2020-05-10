@@ -19,7 +19,7 @@ var transporter = generateTransporter()
  *
  * @param {String} file
  * @param {String} mailTo
- * @param {Function} callback optional (Error, res)
+ * @returns {Promise} on resolve returns (info)
  */
 exports.sendFile = function (file, mailTo) {
   return new Promise((resolve, reject) => {

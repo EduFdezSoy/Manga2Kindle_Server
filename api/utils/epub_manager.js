@@ -85,19 +85,23 @@ exports.edit = function (epubName, title, serie, chapter, author, authorAs, seri
     let OEBPSJsonObj, ebookFinalName
 
     extractEpub(epubName)
-      .then(parseOEBPS(epubName))
-      .then((obpsObj) => editJson(obpsObj, title, serie, chapter, author, authorAs, seriesIdentifier))
+      .then(() => parseOEBPS(epubName))
+      .then((oebpsObj) => editJson(oebpsObj, title, serie, chapter, author, authorAs, seriesIdentifier))
       .then((jsonObj) => {
         OEBPSJsonObj = jsonObj
         buildOEBPS(epubName, jsonObj)
       })
       .then(() => compressEPUB(epubName, OEBPSJsonObj.ebookTitle))
       .then((ebookFilePath) => {
+        console.log(ebookFilePath)
         ebookFinalName = ebookFilePath
         deleteTempFiles(epubName)
       })
       .then(() => resolve(ebookFinalName))
-      .catch((err) => reject(err))
+      .catch((err) => {
+        console.error(err)
+        reject(err)
+      })
   })
 }
 
@@ -185,7 +189,7 @@ function editJson (json, title, serie, chapter, author, authorAs, seriesIdentifi
     json.package.metadata[0]['dc:title'][0] = title
     // json.package.metadata[0]['dc:title'][0] = title + " " + chapter;
     json.package.metadata[0]['dc:creator'][0] = { _: author, $: { 'opf:file-as': authorAs, 'opf:role': 'aut' } }
-    json.package.metadata[0]['dc:contributor'][0]._ = process.env.MASTER_NAME + ' v' + require('../package.json').version
+    json.package.metadata[0]['dc:contributor'][0]._ = process.env.MASTER_NAME + ' v' + require('../../package.json').version
 
     json.package.metadata[0].meta.push({ $: { property: 'belongs-to-collection', id: 'c01' }, _: serie })
     json.package.metadata[0].meta.push({ $: { refines: '#c01', property: 'collection-type' }, _: 'series' })
@@ -239,7 +243,7 @@ function buildOEBPS (epubName, oebpsObj) {
  */
 function compressEPUB (epubName, ebookTitle) {
   return new Promise((resolve, reject) => {
-    const filePath = path.join(__dirname, '/../output/', ebookTitle + '.epub')
+    const filePath = path.join(__dirname, '/../../output/', ebookTitle + '.epub')
     const outputStream = fs.createWriteStream(filePath)
     const zip = archiver('zip', {
       zlib: { level: 9 } // Sets the compression level.
@@ -265,8 +269,11 @@ function compressEPUB (epubName, ebookTitle) {
       reject(err)
     })
 
+    const folderPath = path.join(__dirname, '/../../', process.env.TEMP_FOLDER, '/unziped_' + name + '/')
+
+    console.log(folderPath)
     zip.pipe(outputStream)
-    zip.directory(process.env.TEMP_FOLDER + '/unziped_' + name + '/', false)
+    zip.directory(folderPath, false)
     zip.finalize()
   })
 }
