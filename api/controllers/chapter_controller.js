@@ -1,5 +1,5 @@
 const data = require('../data/data')
-const AsyncConverter = require('../services/async_converter')
+const Converter = require('../utils/converter')
 const path = require('path')
 
 exports.postChapter = (req, res) => {
@@ -60,8 +60,7 @@ exports.postChapter = (req, res) => {
         } else {
           console.log('copied ' + req.body.route)
 
-          const converter = new AsyncConverter().getInstance()
-          const converterObject = converter.formConvObject(
+          const converterObject = new Converter(
             id,
             req.body.manga_id,
             req.body.chapter,
@@ -78,7 +77,9 @@ exports.postChapter = (req, res) => {
               data.setError(id, false, true, 'Unable to save to database: ' + err, (err, res) => { if (err) console.log(err) })
             } else {
               // launch async converter
-              converter.convert(converterObject)
+              converterObject.convert()
+                .then((mailInfo) => console.log('done'))
+                .catch((err) => console.error(err))
             }
           })
         }
