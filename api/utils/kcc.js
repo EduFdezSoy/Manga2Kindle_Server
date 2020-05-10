@@ -8,9 +8,10 @@ const { exec } = require('child_process')
 
 /**
  * Converts the given folder to Epub
+ *
  * @param {String} folderName string to folder
  * @param {Array} options can be null (will pick default values)
- * @param {Function} callback Error or null
+ * @return {Promise} on resolve returns (stdout)
  */
 exports.FolderToEpub = function (folderName, options) {
   return new Promise((resolve, reject) => {

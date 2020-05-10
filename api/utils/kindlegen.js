@@ -8,8 +8,9 @@ const { exec } = require('child_process')
 
 /**
  * Converts the epub to mobi, it needs KindleGen to be installed in the right folder
+ *
  * @param {String} filePath
- * @param {Function} callback Error or null
+ * @return {Promise} on resolve returns (stdout)
  */
 exports.EpubToMobi = function (filePath) {
   return new Promise((resolve, reject) => {
