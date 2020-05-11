@@ -39,24 +39,20 @@ exports.postChapter = (req, res) => {
   console.log('POST /manga/chapter called')
 
   // insert chapter data
-  data.putChapter(req.body.manga_id, req.body.lang_id, req.body.title, req.body.volume, req.body.chapter, req.body.route, req.body.mail, (err, res2) => {
-    if (err) {
-      res.status(503).json('Service Unavailable')
-    } else {
-      const id = res2[0].id
-      req.body.title = res2[0].title
+  data.putChapter(req.body.manga_id, req.body.lang_id, req.body.title, req.body.volume, req.body.chapter, req.body.route, req.body.mail)
+    .then((resChapter) => {
+      const id = resChapter[0].id
+      req.body.title = resChapter[0].title
       // return chapter data
-      res.json(res2)
+      res.json(resChapter)
+      data.setStatus(id, false, false, null)
 
       // move file
       req.files.file.mv(req.body.route, (err) => {
         if (err) {
           console.log(err)
-          data.setError(id, false, true, 'Unable to move: ' + err, (err, res) => {
-            if (err) {
-              console.log(err)
-            }
-          })
+          data.setError(id, false, true, 'Unable to move: ' + err)
+            .catch((err) => console.error(err))
         } else {
           console.log('copied ' + req.body.route)
 
@@ -70,20 +66,15 @@ exports.postChapter = (req, res) => {
             req.body.mail,
             JSON.parse(req.body.options)
           )
-
-          data.setStatus(id, false, false, null, (err, res) => {
-            if (err) {
-              console.log(err)
-              data.setError(id, false, true, 'Unable to save to database: ' + err, (err, res) => { if (err) console.log(err) })
-            } else {
-              // launch async converter
-              converterObject.convert()
-                .then((mailInfo) => console.log('done'))
-                .catch((err) => console.error(err))
-            }
-          })
+          return data.setStatus(id, false, false, null)
+            .then((res) => converterObject.convert())
+            .then((mailInfo) => console.log('done'))
+            .catch((err) => console.error(err))
         }
       })
-    }
-  })
+    })
+    .catch((err) => {
+      console.error(err)
+      res.status(503).json('Service Unavailable')
+    })
 }

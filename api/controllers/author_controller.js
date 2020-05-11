@@ -2,43 +2,33 @@ const data = require('../data/data')
 
 exports.getAuthor = (req, res) => {
   if (req.query.search) {
-    console.log('GET /author called (search)')
-
-    data.searchAuthor(req.query.search, (err, res2) => {
-      if (err) {
+    data.searchAuthor(req.query.search)
+      .then((resAuthors) => res.json(resAuthors))
+      .catch((err) => {
+        console.error(err)
         res.status(503).json('Service Unavailable')
-      } else {
-        res.json(res2)
-      }
-    })
+      })
   } else if (req.query.limit) {
-    console.log('GET /author called (limit)')
-
-    data.getAuthors(req.query.limit, (err, res2) => {
-      if (err) {
+    data.getAuthors(req.query.limit)
+      .then((resAuthors) => res.json(resAuthors))
+      .catch((err) => {
+        console.error(err)
         res.status(503).json('Service Unavailable')
-      } else {
-        res.json(res2)
-      }
-    })
+      })
   } else if (req.query.id) {
-    console.log('GET /author called (id)')
-
-    data.getAuthor(req.query.id, (err, res2) => {
-      if (err) {
+    data.getAuthor(req.query.id)
+      .then((resAuthor) => res.json(resAuthor))
+      .catch((err) => {
+        console.error(err)
         res.status(503).json('Service Unavailable')
-      } else {
-        res.json(res2)
-      }
-    })
+      })
   } else {
-    data.getAuthors(null, (err, res2) => {
-      if (err) {
+    data.getAuthors()
+      .then((resAuthors) => res.json(resAuthors))
+      .catch((err) => {
+        console.error(err)
         res.status(503).json('Service Unavailable')
-      } else {
-        res.json(res2)
-      }
-    })
+      })
   }
 }
 
@@ -57,67 +47,72 @@ exports.putAuthor = (req, res) => {
     }
 
     let result = null
-    data.searchAuthor(req.query.name, (err, res2) => {
-      if (!err) {
-        res2.some(author => {
+
+    data.searchAuthor(req.query.name)
+      .then((resAuthors) => {
+        resAuthors.some(author => {
           if (author.name.toUpperCase() === req.query.name.toUpperCase() &&
-                        author.surname.toUpperCase() === req.query.surname.toUpperCase() &&
-                        author.nickname.toUpperCase() === req.query.nickname.toUpperCase()) {
+            author.surname.toUpperCase() === req.query.surname.toUpperCase() &&
+            author.nickname.toUpperCase() === req.query.nickname.toUpperCase()) {
             result = [author]
             return true
           }
         })
-      }
+      })
+      .catch((err) => {
+        console.error(err)
+        res.status(503).json('Service Unavailable')
+      })
 
-      if (result == null) {
-        data.searchAuthor(req.query.surname, (err, res2) => {
-          if (!err) {
-            res2.some(author => {
-              if (author.name.toUpperCase() === req.query.name.toUpperCase() &&
-                                author.surname.toUpperCase() === req.query.surname.toUpperCase() &&
-                                author.nickname.toUpperCase() === req.query.nickname.toUpperCase()) {
-                result = [author]
-                return true
-              }
-            })
-          }
-
-          if (result == null) {
-            data.searchAuthor(req.query.nickname, (err, res2) => {
-              if (!err) {
-                res2.some(author => {
-                  if (author.name.toUpperCase() === req.query.name.toUpperCase() &&
-                                        author.surname.toUpperCase() === req.query.surname.toUpperCase() &&
-                                        author.nickname.toUpperCase() === req.query.nickname.toUpperCase()) {
-                    result = [author]
-                    return true
-                  }
-                })
-              }
-
-              if (result == null) {
-                data.putAuthor(req.query.name, req.query.surname, req.query.nickname, (err, res2) => {
-                  if (err) {
-                    res.status(503).json('Service Unavailable')
-                  } else {
-                    res.json(res2)
-                  }
-                })
-              } else {
-                res.json(result)
-              }
-            })
-          } else {
-            res.json(result)
-          }
+    if (result == null) {
+      data.searchAuthor(req.query.surname)
+        .then((resAuthors) => {
+          resAuthors.some(author => {
+            if (author.name.toUpperCase() === req.query.name.toUpperCase() &&
+              author.surname.toUpperCase() === req.query.surname.toUpperCase() &&
+              author.nickname.toUpperCase() === req.query.nickname.toUpperCase()) {
+              result = [author]
+              return true
+            }
+          })
         })
-      } else {
-        res.json(result)
-      }
-    })
-  } else {
-    console.log('PUT /author called (Bad Request)')
+        .catch((err) => {
+          console.error(err)
+          res.status(503).json('Service Unavailable')
+        })
+    }
 
+    if (result == null) {
+      data.searchAuthor(req.query.nickname)
+        .then((resAuthors) => {
+          resAuthors.some(author => {
+            if (author.name.toUpperCase() === req.query.name.toUpperCase() &&
+              author.surname.toUpperCase() === req.query.surname.toUpperCase() &&
+              author.nickname.toUpperCase() === req.query.nickname.toUpperCase()) {
+              result = [author]
+              return true
+            }
+          })
+        })
+        .catch((err) => {
+          console.error(err)
+          res.status(503).json('Service Unavailable')
+        })
+    }
+
+    if (result == null) {
+      data.putAuthor(req.query.name, req.query.surname, req.query.nickname)
+        .then((resAuthor) => {
+          result = resAuthor
+        })
+        .catch((err) => {
+          console.error(err)
+          res.status(503).json('Service Unavailable')
+        })
+    }
+
+    res.json(result)
+  } else {
     res.status(400).json('Bad Request, Author may have name, surname and nickname')
   }
 }

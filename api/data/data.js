@@ -6,41 +6,46 @@ const dao = require('./dao')
 
 // #region manga methods
 
-/**
- *
- * @param {Function} callback
- */
-exports.getManga = (id, callback) => {
-  if (!id) {
-    callback(new Error('A required param was null'), null)
-  }
+exports.getManga = (id) => {
+  return new Promise((resolve, reject) => {
+    if (!id) {
+      reject(new Error('A required param was null'))
+    }
 
-  dao.getManga(id, callback)
+    dao.getManga(id)
+      .then((res) => resolve(res))
+      .catch((err) => reject(err))
+  })
 }
 
-/**
- *
- * @param {Function} callback
- */
-exports.getMangas = (limit = 100, callback) => {
-  if (limit > 1000) {
-    limit = 1000
-  }
+exports.getMangas = (limit = 100) => {
+  return new Promise((resolve, reject) => {
+    if (limit > 1000) {
+      limit = 1000
+    }
 
-  dao.getMangas(limit, callback)
+    dao.getMangas(limit)
+      .then((res) => resolve(res))
+      .catch((err) => reject(err))
+  })
 }
 
 /**
  *
  * @param {String} search
  */
-exports.searchManga = (search, callback) => {
-  if (!search) {
-    callback(new Error('A required param was null'), null)
-  } else {
-    search = search.trim()
-    dao.searchManga(search, callback)
-  }
+exports.searchManga = (search) => {
+  return new Promise((resolve, reject) => {
+    if (!search) {
+      reject(new Error('A required param was null'))
+    } else {
+      search = search.trim()
+
+      dao.searchManga(search)
+        .then((res) => resolve(res))
+        .catch((err) => reject(err))
+    }
+  })
 }
 
 /**
@@ -49,17 +54,21 @@ exports.searchManga = (search, callback) => {
  * @param {String} uuid
  * @param {Number} authorId
  */
-exports.putManga = (title, uuid, authorId, callback) => {
-  if (!title || !uuid || !authorId) {
-    callback(new Error('A required param was null'), null)
-  } else {
-    title = trimText(title, 150)
-    if (title === '') {
-      callback(new Error('A required param was a white string'), null)
+exports.putManga = (title, uuid, authorId) => {
+  return new Promise((resolve, reject) => {
+    if (!title || !uuid || !authorId) {
+      reject(new Error('A required param was null'))
     } else {
-      dao.addManga(title, uuid, authorId, callback)
+      title = trimText(title, 150)
+      if (title === '') {
+        reject(new Error('A required param was a white string'))
+      } else {
+        dao.addManga(title, uuid, authorId)
+          .then((res) => resolve(res))
+          .catch((err) => reject(err))
+      }
     }
-  }
+  })
 }
 
 // #endregion
@@ -69,66 +78,75 @@ exports.putManga = (title, uuid, authorId, callback) => {
 /**
  *
  * @param {Number} limit
- * @param {Function} callback
  */
-exports.getAuthors = (limit = 100, callback) => {
+exports.getAuthors = (limit = 100) => {
   if (limit > 1000) {
     limit = 1000
   }
 
-  dao.getAuthors(limit, callback)
+  dao.getAuthors(limit)
 }
 
 /**
  *
  * @param {Number} id
- * @param {Function} callback
  */
-exports.getAuthor = (id, callback) => {
-  if (!id) {
-    callback(new Error('A required param was null'), null)
-  } else {
-    dao.getAuthor(id, callback)
-  }
+exports.getAuthor = (id) => {
+  return new Promise((resolve, reject) => {
+    if (!id) {
+      reject(new Error('A required param was null'))
+    } else {
+      dao.getAuthor(id)
+        .then((res) => resolve(res))
+        .catch((err) => reject(err))
+    }
+  })
 }
 
 /**
  *
  * @param {String} search
- * @param {Function} callback
  */
-exports.searchAuthor = (search, callback) => {
-  if (!search) {
-    callback(new Error('A required param was null'), null)
-  } else {
-    search = trimSpaces(search)
-    dao.searchAuthor(search, callback)
-  }
+exports.searchAuthor = (search) => {
+  return new Promise((resolve, reject) => {
+    if (!search) {
+      reject(new Error('A required param was null'))
+    } else {
+      search = trimSpaces(search)
+      dao.searchAuthor(search)
+        .then((res) => resolve(res))
+        .catch((err) => reject(err))
+    }
+  })
 }
 /**
  *
  * @param {String} name
  * @param {String} surname
  * @param {String} nickname
- * @param {Function} callback
  */
-exports.putAuthor = (name, surname, nickname, callback) => {
-  if (!name) {
-    name = ''
-  }
+exports.putAuthor = (name, surname, nickname) => {
+  return new Promise((resolve, reject) => {
+    if (!name) {
+      name = ''
+    }
 
-  if (!surname) {
-    surname = ''
-  }
+    if (!surname) {
+      surname = ''
+    }
 
-  if (!nickname) {
-    nickname = ''
-  }
+    if (!nickname) {
+      nickname = ''
+    }
 
-  name = name.trim()
-  surname = surname.trim()
-  nickname = nickname.trim()
-  dao.addAuthor(name, surname, nickname, callback)
+    name = name.trim()
+    surname = surname.trim()
+    nickname = nickname.trim()
+
+    dao.addAuthor(name, surname, nickname)
+      .then((res) => resolve(res))
+      .catch((err) => reject(err))
+  })
 }
 
 // #endregion
@@ -144,59 +162,78 @@ exports.putAuthor = (name, surname, nickname, callback) => {
  * @param {Number} chapter
  * @param {String} route
  * @param {String} mail
- * @param {Function} callback
  */
-exports.putChapter = (mangaId, langId, title, volume, chapter, route, mail, callback) => {
-  if (!mangaId || !langId || !route || !mail) {
-    callback(new Error('A required param was null'), null)
-  } else {
-    title = trimText(title, 100)
-    mail = mail.trim()
-    if (mail === '') {
-      callback(new Error('A required param was a white string'), null)
+exports.putChapter = (mangaId, langId, title, volume, chapter, route, mail) => {
+  return new Promise((resolve, reject) => {
+    if (!mangaId || !langId || !route || !mail) {
+      reject(new Error('A required param was null'))
     } else {
-      dao.putChapter(mangaId, langId, title, volume, chapter, route, mail, callback)
+      title = trimText(title, 100)
+      mail = mail.trim()
+      if (mail === '') {
+        reject(new Error('A required param was a white string'))
+      } else {
+        dao.putChapter(mangaId, langId, title, volume, chapter, route, mail)
+          .then((res) => resolve(res))
+          .catch((err) => reject(err))
+      }
     }
-  }
+  })
 }
 
 // #endregion
 
 // #region status
 
-exports.getStatus = (chapterId, callback) => {
-  if (chapterId) {
-    dao.getStatus(chapterId, (err, res) => {
-      if (res && res[0]) {
-        res[0].delivered = parseIntToBools(res[0].delivered)
-        res[0].error = parseIntToBools(res[0].error)
-      }
-      callback(err, res)
-    })
-  } else {
-    callback(new Error('400'), null)
-  }
-}
-
-exports.setStatus = (chapterId, delivered = false, error = false, reason, callback) => {
-  delivered = parseBools(delivered)
-  error = parseBools(error)
-
-  dao.setStatus(chapterId, delivered, error, reason, callback)
-}
-
-exports.setError = (chapterId, delivered = false, error = false, reason, callback) => {
-  delivered = parseBools(delivered)
-  error = parseBools(error)
-
-  this.getStatus(chapterId, (err, res) => {
-    if (err) {
-      callback(new Error('500'), null)
-    } else if (res[0] != null) {
-      dao.editStatus(chapterId, delivered, error, reason, callback)
+exports.getStatus = (chapterId) => {
+  return new Promise((resolve, reject) => {
+    if (chapterId) {
+      dao.getStatus(chapterId)
+        .then((res) => {
+          if (res && res[0]) {
+            res[0].delivered = parseIntToBools(res[0].delivered)
+            res[0].error = parseIntToBools(res[0].error)
+            resolve(res)
+          } else {
+            reject(new Error('404'))
+          }
+        })
+        .catch((err) => reject(err))
     } else {
-      dao.setStatus(chapterId, delivered, error, reason, callback)
+      reject(new Error('400'))
     }
+  })
+}
+
+exports.setStatus = (chapterId, delivered = false, error = false, reason) => {
+  return new Promise((resolve, reject) => {
+    delivered = parseBools(delivered)
+    error = parseBools(error)
+
+    dao.setStatus(chapterId, delivered, error, reason)
+      .then((res) => resolve(res))
+      .catch((err) => reject(err))
+  })
+}
+
+exports.setError = (chapterId, delivered = false, error = false, reason) => {
+  return new Promise((resolve, reject) => {
+    delivered = parseBools(delivered)
+    error = parseBools(error)
+
+    this.getStatus(chapterId)
+      .then((res) => {
+        if (res[0] != null) {
+          dao.editStatus(chapterId, delivered, error, reason)
+            .then((res) => resolve(res))
+            .catch((err) => reject(err))
+        } else {
+          dao.setStatus(chapterId, delivered, error, reason)
+            .then((res) => resolve(res))
+            .catch((err) => reject(err))
+        }
+      })
+      .catch((err) => reject(err))
   })
 }
 
@@ -209,24 +246,22 @@ exports.setError = (chapterId, delivered = false, error = false, reason, callbac
  * @param {String} uuid
  */
 exports.uuidExists = (uuid) => {
-  dao.uuidExists(uuid, (err, res) => {
-    if (err) {
+  dao.uuidExists(uuid)
+    .then((res) => {
+      if (res[0].count === 0) {
+        return false
+      } else {
+        return true
+      }
+    })
+    .catch((err) => {
+      console.error(err)
       return true
-    } else
-    if (res[0].count === 0) {
-      return false
-    } else {
-      return true
-    }
-  })
+    })
 }
 
-/**
- *
- * @param {Function} callback
- */
-exports.getLanguages = (callback) => {
-  dao.getLanguages(callback)
+exports.getLanguages = () => {
+  return dao.getLanguages()
 }
 
 /**

@@ -26,65 +26,42 @@ class Converter {
 
   convert () {
     return new Promise((resolve, reject) => {
+      let mangaOb, ebookFilePath
+
       kcc.FolderToEpub(this.route, this.options)
-        .then((stdout) => {
-          // TODO: log stdout as silly
-          data.getManga(this.manga_id, (err, resManga) => {
-            if (err) {
-              ifError(this.id, err, "Can't get the Manga")
-              reject(err)
-              return
-            }
-
-            data.getAuthor(resManga[0].author_id, (err, resAuthor) => {
-              if (err) {
-                ifError(this.id, err, "Can't get the Author")
-                reject(err)
-                return
-              }
-
-              const epubName = formEpubFilename(this.route)
-              const title = formEpubTitle(resManga[0].title, this.chapter, this.volume, this.title)
-              const author = formAuthorName(resAuthor[0])
-              const authorAs = formAuthorAs(resAuthor[0])
-
-              let ebookFilePath
-
-              // itadakimasu!  --  edit the epub, add lots of metadata and close it
-              epubManager.edit(epubName, title, resManga[0].title, this.chapter, author, authorAs, resManga[0].uuid)
-                .then((filename) => {
-                  ebookFilePath = path.join(__dirname, '/../../output/', filename)
-                  return kindlegen.EpubToMobi(ebookFilePath)
-                })
-                .then((stdout) => rm.rmrf(ebookFilePath))
-                .then((stdout) => emailer.sendFile(changeExtension(ebookFilePath), this.mail))
-                .then((info) => {
-                  const status = info.response.substring(0, 2)
-                  if (status === '25') {
-                    data.setError(this.id, true, false, null, (err, res) => {
-                      if (err) {
-                        console.log(err)
-                        reject(err)
-                        return
-                      }
-                      resolve(info)
-                    })
-                  } else {
-                    data.setError(this.id, true, true, 'Chapter sent but failed: ' + info.response, (err, res) => {
-                      if (err) {
-                        console.log(err)
-                        reject(err)
-                        return
-                      }
-                      resolve(info)
-                    })
-                  }
-                })
-                .catch((err) => reject(err))
-            })
-          })
+        .then((stdout) => data.getManga(this.manga_id))
+        .then((resManga) => {
+          mangaOb = resManga[0]
+          return data.getAuthor(mangaOb.author_id)
         })
-        .catch((err) => reject(err))
+        .then((resAuthor) => {
+          const epubName = formEpubFilename(this.route)
+          const title = formEpubTitle(mangaOb.title, this.chapter, this.volume, this.title)
+          const author = formAuthorName(resAuthor[0])
+          const authorAs = formAuthorAs(resAuthor[0])
+
+          // itadakimasu!  --  edit the epub, add lots of metadata and close it
+          return epubManager.edit(epubName, title, mangaOb.title, this.chapter, author, authorAs, mangaOb.uuid)
+        })
+        .then((filename) => {
+          ebookFilePath = path.join(__dirname, '/../../output/', filename)
+          return kindlegen.EpubToMobi(ebookFilePath)
+        })
+        .then((stdout) => rm.rmrf(ebookFilePath))
+        .then((stdout) => emailer.sendFile(changeExtension(ebookFilePath), this.mail))
+        .then((info) => {
+          const status = info.response.substring(0, 2)
+          if (status === '25') {
+            return data.setError(this.id, true, false, null)
+          } else {
+            return data.setError(this.id, true, true, 'Chapter sent but failed: ' + info.response)
+          }
+        })
+        .catch((err) => {
+          data.setError(this.chapter, false, true, err.message)
+            .then(() => resolve())
+            .catch((err) => reject(err))
+        })
     })
   }
 }
@@ -92,24 +69,6 @@ class Converter {
 module.exports = Converter
 
 // #region private functions
-
-/**
- * This function logs the error
- * @param {Number} chapterId chapter's id
- * @param {Error} err Error
- * @param {Function} callback callback function (reason, res)
- * @param {String} msg message
- */
-function ifError (chapterId, err, msg = 'Error') {
-  console.log(err)
-
-  const reason = msg + ': ' + err.message
-  data.setError(chapterId, false, true, reason, (err, res) => {
-    if (err) {
-      console.log(err)
-    }
-  })
-}
 
 function formEpubFilename (route) {
   let epubName = route
