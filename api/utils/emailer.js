@@ -75,7 +75,7 @@ function sendEbook (file, mailTo, callback) {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      logger.error('Unable send the email: ' + error)
+      logger.error('Unable send the email: ' + error.message)
       callback(error, null)
     }
 
@@ -85,7 +85,7 @@ function sendEbook (file, mailTo, callback) {
         callback(error, info)
       })
       .catch(err => {
-        logger.error(err)
+        logger.error(err.message)
         callback(err, null)
       })
   })
@@ -109,7 +109,7 @@ function sendEmail (subject, message) {
 
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
-        logger.error(error)
+        logger.error(error.message)
       } else {
         logger.verbose('Email sent: ' + info.response)
       }

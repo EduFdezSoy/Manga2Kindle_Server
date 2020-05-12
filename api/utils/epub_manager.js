@@ -100,7 +100,7 @@ exports.edit = function (epubName, title, serie, chapter, author, authorAs, seri
       })
       .then(() => resolve(ebookFinalName))
       .catch((err) => {
-        logger.error(err)
+        logger.error(err.message)
         reject(err)
       })
   })

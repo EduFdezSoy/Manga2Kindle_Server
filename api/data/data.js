@@ -254,7 +254,7 @@ exports.uuidExists = (uuid) => {
       }
     })
     .catch((err) => {
-      logger.error(err)
+      logger.error(err.message)
       return true
     })
 }

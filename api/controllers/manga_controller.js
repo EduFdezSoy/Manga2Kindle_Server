@@ -6,21 +6,21 @@ exports.getManga = (req, res) => {
     data.searchManga(req.query.search)
       .then((mangas) => res.json(mangas))
       .catch((err) => {
-        logger.error(err)
+        logger.error(err.message)
         res.status(503).json('Service Unavailable')
       })
   } else if (req.query.limit) {
     data.getMangas(req.query.limit)
       .then((mangas) => res.json(mangas))
       .catch((err) => {
-        logger.error(err)
+        logger.error(err.message)
         res.status(503).json('Service Unavailable')
       })
   } else {
     data.getMangas()
       .then((mangas) => res.json(mangas))
       .catch((err) => {
-        logger.error(err)
+        logger.error(err.message)
         res.status(503).json('Service Unavailable')
       })
   }
