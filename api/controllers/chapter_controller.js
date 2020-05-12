@@ -1,6 +1,7 @@
 const data = require('../data/data')
 const Converter = require('../utils/converter')
 const path = require('path')
+const logger = require('../utils/logger')
 
 exports.postChapter = (req, res) => {
   if (!req.body.manga_id || !req.body.lang_id || !req.body.title || !req.body.chapter || !req.body.mail) {
@@ -54,7 +55,7 @@ exports.postChapter = (req, res) => {
     // move file
     .then(req.files.file.mv(req.body.route))
     .then(() => {
-      console.log('copied ' + req.body.route)
+      logger.verbose('Chapter copied to %s', req.body.route)
       req.body.converterObject = new Converter(
         req.body.id,
         req.body.manga_id,
@@ -68,11 +69,11 @@ exports.postChapter = (req, res) => {
       return data.setError(req.body.id, false, false, null)
     })
     .then((res) => req.body.converterObject.convert())
-    .then((mailInfo) => console.log('done'))
+    .then((mailInfo) => logger.silly('done'))
     .catch((err) => {
-      console.error(err)
+      logger.error(err)
       data.setError(req.body.id, false, true, err.message)
-        .catch((err) => console.error(err))
+        .catch((err) => logger.error(err))
       if (!res.headersSent) {
         res.status(503).json('Service Unavailable')
       }

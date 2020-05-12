@@ -11,7 +11,7 @@ const fileFormat = winston.format.combine(
   }),
   winston.format.errors({ stack: true }),
   winston.format.splat(),
-  winston.format.printf(info => `${info.timestamp} | ${info.level.padStart(5)} | ${info.message}`)
+  winston.format.printf(info => `${info.timestamp} | ${info.level.padStart(7)} | ${info.message}`)
 )
 
 const consoleFormat = winston.format.combine(
@@ -49,11 +49,28 @@ const logger = winston.createLogger({
       maxFiles: 5,
       format: fileFormat
     }),
+    new winston.transports.File({
+      filename: './logs/verbose.log',
+      maxsize: 10485760, // 10MB
+      maxFiles: 3,
+      level: 'verbose',
+      format: fileFormat
+    }),
     new winston.transports.Console({
       level: 'silly',
       format: consoleFormat
     })
   ]
 })
+
+logger.stream = {
+  write: function (message, encoding) {
+    // remove new lines
+    message = message.replace(/\n+/g, ' ').trim()
+
+    // use the 'info' log level so the output will be picked up by both transports (file and console)
+    logger.http(message)
+  }
+}
 
 module.exports = logger

@@ -1,25 +1,26 @@
 const data = require('../data/data')
+const logger = require('../utils/logger')
 
 exports.getManga = (req, res) => {
   if (req.query.search) {
     data.searchManga(req.query.search)
       .then((mangas) => res.json(mangas))
       .catch((err) => {
-        console.error(err)
+        logger.error(err)
         res.status(503).json('Service Unavailable')
       })
   } else if (req.query.limit) {
     data.getMangas(req.query.limit)
       .then((mangas) => res.json(mangas))
       .catch((err) => {
-        console.error(err)
+        logger.error(err)
         res.status(503).json('Service Unavailable')
       })
   } else {
     data.getMangas()
       .then((mangas) => res.json(mangas))
       .catch((err) => {
-        console.error(err)
+        logger.error(err)
         res.status(503).json('Service Unavailable')
       })
   }

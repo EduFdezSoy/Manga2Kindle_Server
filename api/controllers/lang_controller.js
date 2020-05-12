@@ -1,10 +1,11 @@
 const data = require('../data/data')
+const logger = require('../utils/logger')
 
 exports.getLanguages = (req, res) => {
   data.getLanguages()
     .then((lags) => res.json(lags))
     .catch((err) => {
-      console.error(err)
+      logger.error(err)
       res.status(503).json('Service Unavailable')
     })
 }
