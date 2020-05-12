@@ -1,32 +1,33 @@
 const data = require('../data/data')
+const logger = require('../utils/logger')
 
 exports.getAuthor = (req, res) => {
   if (req.query.search) {
     data.searchAuthor(req.query.search)
       .then((resAuthors) => res.json(resAuthors))
       .catch((err) => {
-        console.error(err)
+        logger.error(err)
         res.status(503).json('Service Unavailable')
       })
   } else if (req.query.limit) {
     data.getAuthors(req.query.limit)
       .then((resAuthors) => res.json(resAuthors))
       .catch((err) => {
-        console.error(err)
+        logger.error(err)
         res.status(503).json('Service Unavailable')
       })
   } else if (req.query.id) {
     data.getAuthor(req.query.id)
       .then((resAuthor) => res.json(resAuthor))
       .catch((err) => {
-        console.error(err)
+        logger.error(err)
         res.status(503).json('Service Unavailable')
       })
   } else {
     data.getAuthors()
       .then((resAuthors) => res.json(resAuthors))
       .catch((err) => {
-        console.error(err)
+        logger.error(err)
         res.status(503).json('Service Unavailable')
       })
   }
@@ -81,7 +82,7 @@ exports.putAuthor = (req, res) => {
         res.json(resAuthor)
       })
       .catch((err) => {
-        console.error(err)
+        logger.error(err)
         res.status(503).json('Service Unavailable')
       })
   } else {
@@ -110,7 +111,7 @@ function searchAuthorBy (searchParam, [name, surname, nickname]) {
         return resolve(null)
       })
       .catch((err) => {
-        console.error(err)
+        logger.error(err)
         reject(new Error('Cant get authors'))
       })
   })

@@ -9,7 +9,8 @@ const express = require('express')
 const dotenv = require('dotenv')
 const fileupload = require('express-fileupload')
 const path = require('path')
-const logger = require('morgan')
+const morgan = require('morgan')
+const logger = require('./utils/logger')
 
 const indexRouter = require('./routes/index')
 const mangaRouter = require('./routes/manga')
@@ -17,7 +18,7 @@ const mangaRouter = require('./routes/manga')
 const app = express()
 dotenv.config()
 
-app.use(logger('dev'))
+app.use(morgan(':remote-addr - :remote-user | :method | ":url" | "HTTP/:http-version" | :status | ":referrer" | ":user-agent"', { stream: logger.stream }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(fileupload({

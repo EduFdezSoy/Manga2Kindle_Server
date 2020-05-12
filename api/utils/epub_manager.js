@@ -7,6 +7,7 @@
 const fs = require('fs')
 const path = require('path')
 const rm = require('../utils/rm')
+const logger = require('../utils/logger')
 const AdmZip = require('adm-zip')
 const archiver = require('archiver')
 const xml2js = require('xml2js')
@@ -93,13 +94,13 @@ exports.edit = function (epubName, title, serie, chapter, author, authorAs, seri
       })
       .then(() => compressEPUB(epubName, OEBPSJsonObj.ebookTitle))
       .then((ebookFilePath) => {
-        console.log(ebookFilePath)
+        logger.silly(ebookFilePath)
         ebookFinalName = ebookFilePath
         deleteTempFiles(epubName)
       })
       .then(() => resolve(ebookFinalName))
       .catch((err) => {
-        console.error(err)
+        logger.error(err)
         reject(err)
       })
   })
@@ -261,7 +262,7 @@ function compressEPUB (epubName, ebookTitle) {
     }
 
     outputStream.on('close', function () {
-      console.log(Math.round(((zip.pointer() / 1000) / 1000) * 100) / 100 + ' MB epub file saved') // print the mb saved
+      logger.verbose(Math.round(((zip.pointer() / 1000) / 1000) * 100) / 100 + ' MB epub file saved') // print the mb saved
       resolve(ebookTitle + '.epub')
     })
 
@@ -271,7 +272,7 @@ function compressEPUB (epubName, ebookTitle) {
 
     const folderPath = path.join(__dirname, '/../../', process.env.TEMP_FOLDER, '/unziped_' + name + '/')
 
-    console.log(folderPath)
+    logger.silly(folderPath)
     zip.pipe(outputStream)
     zip.directory(folderPath, false)
     zip.finalize()
@@ -288,7 +289,7 @@ function deleteTempFiles (epubName) {
     let name
     let comand
 
-    console.log('deleting epub file')
+    logger.silly('deleting epub file')
     comand = epubName
     rm.rmrf(comand)
 
@@ -300,7 +301,7 @@ function deleteTempFiles (epubName) {
     }
 
     if (process.env.DELETE_INPUT) {
-      console.log('deleting zip file')
+      logger.silly('deleting zip file')
       comand = name + '.zip'
       rm.rmrf(comand)
     }
@@ -308,7 +309,7 @@ function deleteTempFiles (epubName) {
     // cut epub path to only get the name
     name = name.substring(name.lastIndexOf('/') + 1)
 
-    console.log('deleting unziped files')
+    logger.silly('deleting unziped files')
     const filePath = path.join(__dirname, '/../../', process.env.TEMP_FOLDER, '/unziped_' + name)
     rm.rmrf(filePath)
 

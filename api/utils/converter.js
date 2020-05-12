@@ -5,12 +5,14 @@
 
 // dependencies
 const path = require('path')
+const { performance } = require('perf_hooks')
 const data = require('../data/data')
 const epubManager = require('../utils/epub_manager')
 const kcc = require('../utils/kcc')
 const kindlegen = require('../utils/kindlegen')
 const rm = require('../utils/rm')
 const emailer = require('../utils/emailer')
+const logger = require('../utils/logger')
 
 class Converter {
   constructor (id, mangaId, chapter, volume, title, route, mail, options = null) {
@@ -26,7 +28,8 @@ class Converter {
 
   convert () {
     return new Promise((resolve, reject) => {
-      let mangaOb, ebookFilePath
+      let mangaOb, ebookFilePath, timer, totalTime
+      timer = performance.now()
 
       kcc.FolderToEpub(this.route, this.options)
         .then((stdout) => data.getManga(this.manga_id))
@@ -48,8 +51,16 @@ class Converter {
           return kindlegen.EpubToMobi(ebookFilePath)
         })
         .then((stdout) => rm.rmrf(ebookFilePath))
-        .then((stdout) => emailer.sendFile(changeExtension(ebookFilePath), this.mail))
+        .then((stdout) => {
+          const timeNow = performance.now()
+          logger.verbose('chapter (%d) converted in %d seconds', this.id, (timeNow - timer) / 1000)
+          totalTime = timeNow - timer
+          timer = timeNow
+          return emailer.sendFile(changeExtension(ebookFilePath), this.mail)
+        })
         .then((info) => {
+          const timeNow = performance.now() - timer
+          logger.verbose('chapter (%d) sent in %d seconds (Total: %d)', this.id, timeNow / 1000, (timeNow + totalTime) / 1000)
           const status = info.response.substring(0, 2)
           if (status === '25') {
             return data.setError(this.id, true, false, null)
@@ -57,6 +68,7 @@ class Converter {
             return data.setError(this.id, true, true, 'Chapter sent but failed: ' + info.response)
           }
         })
+        .then((res) => resolve(res))
         .catch((err) => reject(err))
     })
   }

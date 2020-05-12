@@ -7,6 +7,7 @@
 
 const nodemailer = require('nodemailer')
 const rm = require('../utils/rm')
+const logger = require('../utils/logger')
 const dotenv = require('dotenv')
 dotenv.config()
 
@@ -29,7 +30,7 @@ exports.sendFile = function (file, mailTo) {
         return
       }
       resolve(res)
-      console.log('file sended.')
+      logger.silly('file sended.')
     })
   })
 }
@@ -74,17 +75,17 @@ function sendEbook (file, mailTo, callback) {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log('Unable send the email: ' + error)
+      logger.error('Unable send the email: ' + error)
       callback(error, null)
     }
 
     rm.rmrf(file)
       .then(res => {
-        console.log('Email sent: ' + info.response + ' - file deleted (' + file + ')')
+        logger.verbose('Email sent: ' + info.response + ' - file deleted (' + file + ')')
         callback(error, info)
       })
       .catch(err => {
-        console.error(err)
+        logger.error(err)
         callback(err, null)
       })
   })
@@ -108,9 +109,9 @@ function sendEmail (subject, message) {
 
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
-        console.error(error)
+        logger.error(error)
       } else {
-        console.log('Email sent: ' + info.response)
+        logger.verbose('Email sent: ' + info.response)
       }
     })
   }

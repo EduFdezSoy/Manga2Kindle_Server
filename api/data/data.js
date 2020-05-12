@@ -3,6 +3,7 @@
  */
 
 const dao = require('./dao')
+const logger = require('../utils/logger')
 
 // #region manga methods
 
@@ -253,7 +254,7 @@ exports.uuidExists = (uuid) => {
       }
     })
     .catch((err) => {
-      console.error(err)
+      logger.error(err)
       return true
     })
 }
