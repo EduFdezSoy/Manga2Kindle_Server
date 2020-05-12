@@ -34,8 +34,6 @@ exports.getAuthor = (req, res) => {
 
 exports.putAuthor = (req, res) => {
   if (req.query.name || req.query.surname || req.query.nickname) {
-    console.log('PUT /author called')
-
     if (req.query.name == null) {
       req.query.name = ''
     }
@@ -46,73 +44,76 @@ exports.putAuthor = (req, res) => {
       req.query.nickname = ''
     }
 
-    let result = null
+    let resAuthor = null
+    searchAuthorBy(req.query.name, [req.query.name, req.query.surname, req.query.nickname])
+      .then((res) => {
+        if (res) {
+          resAuthor = res
+          return
+        }
+        return searchAuthorBy(req.query.surname, [req.query.name, req.query.surname, req.query.nickname])
+      })
+      .then((res) => {
+        if (resAuthor) {
+          return
+        }
+        if (res) {
+          resAuthor = res
+          return
+        }
+        return searchAuthorBy(req.query.nickname, [req.query.name, req.query.surname, req.query.nickname])
+      })
+      .then((res) => {
+        if (resAuthor) {
+          return
+        }
+        if (res) {
+          resAuthor = res
+          return
+        }
+        return data.putAuthor(req.query.name, req.query.surname, req.query.nickname)
+      })
+      .then((resA) => {
+        if (resA) {
+          resAuthor = resA
+        }
 
-    data.searchAuthor(req.query.name)
-      .then((resAuthors) => {
-        resAuthors.some(author => {
-          if (author.name.toUpperCase() === req.query.name.toUpperCase() &&
-            author.surname.toUpperCase() === req.query.surname.toUpperCase() &&
-            author.nickname.toUpperCase() === req.query.nickname.toUpperCase()) {
-            result = [author]
-            return true
-          }
-        })
+        res.json(resAuthor)
       })
       .catch((err) => {
         console.error(err)
         res.status(503).json('Service Unavailable')
       })
-
-    if (result == null) {
-      data.searchAuthor(req.query.surname)
-        .then((resAuthors) => {
-          resAuthors.some(author => {
-            if (author.name.toUpperCase() === req.query.name.toUpperCase() &&
-              author.surname.toUpperCase() === req.query.surname.toUpperCase() &&
-              author.nickname.toUpperCase() === req.query.nickname.toUpperCase()) {
-              result = [author]
-              return true
-            }
-          })
-        })
-        .catch((err) => {
-          console.error(err)
-          res.status(503).json('Service Unavailable')
-        })
-    }
-
-    if (result == null) {
-      data.searchAuthor(req.query.nickname)
-        .then((resAuthors) => {
-          resAuthors.some(author => {
-            if (author.name.toUpperCase() === req.query.name.toUpperCase() &&
-              author.surname.toUpperCase() === req.query.surname.toUpperCase() &&
-              author.nickname.toUpperCase() === req.query.nickname.toUpperCase()) {
-              result = [author]
-              return true
-            }
-          })
-        })
-        .catch((err) => {
-          console.error(err)
-          res.status(503).json('Service Unavailable')
-        })
-    }
-
-    if (result == null) {
-      data.putAuthor(req.query.name, req.query.surname, req.query.nickname)
-        .then((resAuthor) => {
-          result = resAuthor
-        })
-        .catch((err) => {
-          console.error(err)
-          res.status(503).json('Service Unavailable')
-        })
-    }
-
-    res.json(result)
   } else {
     res.status(400).json('Bad Request, Author may have name, surname and nickname')
   }
 }
+
+// #region private functions
+
+function searchAuthorBy (searchParam, [name, surname, nickname]) {
+  return new Promise((resolve, reject) => {
+    if (searchParam === '') {
+      return resolve(null)
+    }
+
+    data.searchAuthor(searchParam)
+      .then((resAuthors) => {
+        resAuthors.some(author => {
+          if (author.name.toUpperCase() === name.toUpperCase() &&
+            author.surname.toUpperCase() === surname.toUpperCase() &&
+            author.nickname.toUpperCase() === nickname.toUpperCase()) {
+            return resolve(author)
+          }
+        })
+
+        return resolve(null)
+      })
+      .catch((err) => {
+        console.error(err)
+        reject(new Error('Cant get authors'))
+      })
+  })
+}
+
+// #endregion
