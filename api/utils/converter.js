@@ -53,14 +53,14 @@ class Converter {
         .then((stdout) => rm.rmrf(ebookFilePath))
         .then((stdout) => {
           const timeNow = performance.now()
-          logger.verbose('chapter converted in %d seconds', (timeNow - timer) / 1000)
+          logger.verbose('chapter (%d) converted in %d seconds', this.id, (timeNow - timer) / 1000)
           totalTime = timeNow - timer
           timer = timeNow
           return emailer.sendFile(changeExtension(ebookFilePath), this.mail)
         })
         .then((info) => {
           const timeNow = performance.now() - timer
-          logger.verbose('chapter sent in %d seconds (Total: %d)', timeNow / 1000, (timeNow + totalTime) / 1000)
+          logger.verbose('chapter (%d) sent in %d seconds (Total: %d)', this.id, timeNow / 1000, (timeNow + totalTime) / 1000)
           const status = info.response.substring(0, 2)
           if (status === '25') {
             return data.setError(this.id, true, false, null)
