@@ -5,7 +5,7 @@ exports.getLanguages = (req, res) => {
   data.getLanguages()
     .then((lags) => res.json(lags))
     .catch((err) => {
-      logger.error(err)
+      logger.error(err.message)
       res.status(503).json('Service Unavailable')
     })
 }

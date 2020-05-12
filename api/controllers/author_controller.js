@@ -6,28 +6,28 @@ exports.getAuthor = (req, res) => {
     data.searchAuthor(req.query.search)
       .then((resAuthors) => res.json(resAuthors))
       .catch((err) => {
-        logger.error(err)
+        logger.error(err.message)
         res.status(503).json('Service Unavailable')
       })
   } else if (req.query.limit) {
     data.getAuthors(req.query.limit)
       .then((resAuthors) => res.json(resAuthors))
       .catch((err) => {
-        logger.error(err)
+        logger.error(err.message)
         res.status(503).json('Service Unavailable')
       })
   } else if (req.query.id) {
     data.getAuthor(req.query.id)
       .then((resAuthor) => res.json(resAuthor))
       .catch((err) => {
-        logger.error(err)
+        logger.error(err.message)
         res.status(503).json('Service Unavailable')
       })
   } else {
     data.getAuthors()
       .then((resAuthors) => res.json(resAuthors))
       .catch((err) => {
-        logger.error(err)
+        logger.error(err.message)
         res.status(503).json('Service Unavailable')
       })
   }
@@ -82,7 +82,7 @@ exports.putAuthor = (req, res) => {
         res.json(resAuthor)
       })
       .catch((err) => {
-        logger.error(err)
+        logger.error(err.message)
         res.status(503).json('Service Unavailable')
       })
   } else {
@@ -111,7 +111,7 @@ function searchAuthorBy (searchParam, [name, surname, nickname]) {
         return resolve(null)
       })
       .catch((err) => {
-        logger.error(err)
+        logger.error(err.message)
         reject(new Error('Cant get authors'))
       })
   })

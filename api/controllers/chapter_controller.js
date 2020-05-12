@@ -71,9 +71,9 @@ exports.postChapter = (req, res) => {
     .then((res) => req.body.converterObject.convert())
     .then((mailInfo) => logger.silly('done'))
     .catch((err) => {
-      logger.error(err)
+      logger.error(err.message)
       data.setError(req.body.id, false, true, err.message)
-        .catch((err) => logger.error(err))
+        .catch((err) => logger.error(err.message))
       if (!res.headersSent) {
         res.status(503).json('Service Unavailable')
       }
