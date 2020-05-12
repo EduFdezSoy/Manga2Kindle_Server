@@ -3,6 +3,11 @@ const Converter = require('../utils/converter')
 const path = require('path')
 
 exports.postChapter = (req, res) => {
+  if (!req.body.manga_id || !req.body.lang_id || !req.body.title || !req.body.chapter || !req.body.mail) {
+    res.status(400).json('Bad Request')
+    return
+  }
+
   // get current date
   const today = new Date()
   const dd = String(today.getDate()).padStart(2, '0')
@@ -36,45 +41,40 @@ exports.postChapter = (req, res) => {
   }
 
   // TODO: check file size
-  console.log('POST /manga/chapter called')
 
   // insert chapter data
   data.putChapter(req.body.manga_id, req.body.lang_id, req.body.title, req.body.volume, req.body.chapter, req.body.route, req.body.mail)
     .then((resChapter) => {
-      const id = resChapter[0].id
+      req.body.id = resChapter[0].id
       req.body.title = resChapter[0].title
       // return chapter data
       res.json(resChapter)
-      data.setStatus(id, false, false, null)
-
-      // move file
-      req.files.file.mv(req.body.route, (err) => {
-        if (err) {
-          console.log(err)
-          data.setError(id, false, true, 'Unable to move: ' + err)
-            .catch((err) => console.error(err))
-        } else {
-          console.log('copied ' + req.body.route)
-
-          const converterObject = new Converter(
-            id,
-            req.body.manga_id,
-            req.body.chapter,
-            req.body.volume,
-            req.body.title,
-            req.body.route,
-            req.body.mail,
-            JSON.parse(req.body.options)
-          )
-          return data.setStatus(id, false, false, null)
-            .then((res) => converterObject.convert())
-            .then((mailInfo) => console.log('done'))
-            .catch((err) => console.error(err))
-        }
-      })
+      return data.setStatus(req.body.id, false, false, null)
     })
+    // move file
+    .then(req.files.file.mv(req.body.route))
+    .then(() => {
+      console.log('copied ' + req.body.route)
+      req.body.converterObject = new Converter(
+        req.body.id,
+        req.body.manga_id,
+        req.body.chapter,
+        req.body.volume,
+        req.body.title,
+        req.body.route,
+        req.body.mail,
+        JSON.parse(req.body.options)
+      )
+      return data.setError(req.body.id, false, false, null)
+    })
+    .then((res) => req.body.converterObject.convert())
+    .then((mailInfo) => console.log('done'))
     .catch((err) => {
       console.error(err)
-      res.status(503).json('Service Unavailable')
+      data.setError(req.body.id, false, true, err.message)
+        .catch((err) => console.error(err))
+      if (!res.headersSent) {
+        res.status(503).json('Service Unavailable')
+      }
     })
 }

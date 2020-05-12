@@ -57,11 +57,7 @@ class Converter {
             return data.setError(this.id, true, true, 'Chapter sent but failed: ' + info.response)
           }
         })
-        .catch((err) => {
-          data.setError(this.chapter, false, true, err.message)
-            .then(() => resolve())
-            .catch((err) => reject(err))
-        })
+        .catch((err) => reject(err))
     })
   }
 }

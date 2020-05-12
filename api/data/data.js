@@ -193,10 +193,8 @@ exports.getStatus = (chapterId) => {
           if (res && res[0]) {
             res[0].delivered = parseIntToBools(res[0].delivered)
             res[0].error = parseIntToBools(res[0].error)
-            resolve(res)
-          } else {
-            reject(new Error('404'))
           }
+          resolve(res)
         })
         .catch((err) => reject(err))
     } else {
