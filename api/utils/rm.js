@@ -14,9 +14,9 @@ const { exec } = require('child_process')
 exports.rm = function (filePath) {
   return new Promise((resolve, reject) => {
     // escape spaces in the path
-    filePath = filePath.replace(/(\s+)/g, '\\$1')
+    filePath = filePath.replace(/(")/g, '\\$1')
 
-    const comand = 'rm ' + filePath
+    const comand = 'rm "' + filePath + '"'
 
     exec(comand, (error, stdout, stderr) => {
       if (error) {
@@ -39,9 +39,9 @@ exports.rm = function (filePath) {
 exports.rmrf = function (filePath) {
   return new Promise((resolve, reject) => {
     // escape spaces in the path
-    filePath = filePath.replace(/(\s+)/g, '\\$1')
+    filePath = filePath.replace(/(")/g, '\\$1')
 
-    const comand = 'rm -rf ' + filePath
+    const comand = 'rm -rf "' + filePath + '"'
 
     exec(comand, (error, stdout, stderr) => {
       if (error) {
