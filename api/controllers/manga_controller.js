@@ -27,27 +27,33 @@ exports.getManga = (req, res) => {
 
 exports.putManga = (req, res) => {
   if (req.query.title && req.query.author_id) {
-    console.log('PUT /manga called')
-
     // check if the manga already exists
     data.searchManga(req.query.title)
       .then((mangas) => {
-        if (mangas[0] && mangas[0].author_id === req.query.author_id) {
-          res.json([mangas[0]])
-        } else {
-          do {
-            req.query.uuid = 'urn:uuid:74357528-3935-2740-8282-' // TODO: add this to the .env
-            req.query.uuid += Math.floor(Math.random() * (999999999999 - 100000000000) + 100000000000)
-          } while (data.uuidExists(req.query.uuid))
+        mangas.some(manga => {
+          if (manga.author_id === parseInt(req.query.author_id)) {
+            res.json([manga])
+            return true
+          }
+        })
+        if (!res.headersSent) {
+          if (mangas[0] && mangas[0].author_id === req.query.author_id) {
+            res.json([mangas[0]])
+          } else {
+            do {
+              req.query.uuid = 'urn:uuid:74357528-3935-2740-8282-' // TODO: add this to the .env
+              req.query.uuid += Math.floor(Math.random() * (999999999999 - 100000000000) + 100000000000)
+            } while (data.uuidExists(req.query.uuid))
 
-          data.putManga(req.query.title, req.query.uuid, req.query.author_id)
-            .then((manga) => res.json(manga))
-            .catch((err) => {
-              res.status(503).json({
-                msg: 'Service Unavailable',
-                error: err
+            data.putManga(req.query.title, req.query.uuid, req.query.author_id)
+              .then((manga) => res.json(manga))
+              .catch((err) => {
+                res.status(503).json({
+                  msg: 'Service Unavailable',
+                  error: err
+                })
               })
-            })
+          }
         }
       })
       .catch((err) => {
@@ -57,8 +63,6 @@ exports.putManga = (req, res) => {
         })
       })
   } else {
-    console.log('PUT /manga called (Bad Request)')
-
     res.status(400).json('Bad Request, Manga may have title and author identifier')
   }
 }
