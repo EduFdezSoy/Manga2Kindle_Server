@@ -6,7 +6,8 @@
  */
 
 const nodemailer = require('nodemailer')
-const shell = require('shelljs')
+const rm = require('../utils/rm')
+const logger = require('../utils/logger')
 const dotenv = require('dotenv')
 dotenv.config()
 
@@ -19,16 +20,19 @@ var transporter = generateTransporter()
  *
  * @param {String} file
  * @param {String} mailTo
- * @param {Function} callback optional (Error, res)
+ * @returns {Promise} on resolve returns (info)
  */
-exports.sendFile = function (file, mailTo, callback = null) {
-  if (callback == null) {
-    sendEbook(file, mailTo, () => {
-      console.log('file sended.')
+exports.sendFile = function (file, mailTo) {
+  return new Promise((resolve, reject) => {
+    sendEbook(file, mailTo, (err, res) => {
+      if (err) {
+        reject(err)
+        return
+      }
+      resolve(res)
+      logger.silly('file sended.')
     })
-  } else {
-    sendEbook(file, mailTo, callback)
-  }
+  })
 }
 
 /**
@@ -71,13 +75,19 @@ function sendEbook (file, mailTo, callback) {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log('Unable send the email: ' + error)
+      logger.error('Unable send the email: ' + error)
       callback(error, null)
     }
 
-    shell.rm('-rf', file)
-    console.log('Email sent: ' + info.response + ' - file deleted (' + file + ')')
-    callback(null, info)
+    rm.rmrf(file)
+      .then(res => {
+        logger.verbose('Email sent: ' + info.response + ' - file deleted (' + file + ')')
+        callback(error, info)
+      })
+      .catch(err => {
+        logger.error(err)
+        callback(err, null)
+      })
   })
 }
 
@@ -99,9 +109,9 @@ function sendEmail (subject, message) {
 
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
-        console.error(error)
+        logger.error(error)
       } else {
-        console.log('Email sent: ' + info.response)
+        logger.verbose('Email sent: ' + info.response)
       }
     })
   }
