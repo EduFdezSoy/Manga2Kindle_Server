@@ -84,7 +84,7 @@ exports.getAuthors = (limit = 100) => {
     limit = 1000
   }
 
-  dao.getAuthors(limit)
+  return dao.getAuthors(limit)
 }
 
 /**
