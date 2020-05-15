@@ -52,13 +52,15 @@ function enqueue () {
 
         return converter.enqueue(ob)
       })
+      .then((res) => {
+        converterRunning = false
+      })
       .catch(err => {
         if (err.message !== 'Already taken') {
           logger.error(err.message)
           console.error(err)
         }
-      })
-      .finally(() => {
+
         converterRunning = false
       })
   }
