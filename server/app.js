@@ -38,7 +38,6 @@ function enqueue () {
           return data.getChapter(res.chapter_id)
         } else {
           console.error(res)
-          die()
         }
       })
       .then((res) => {
