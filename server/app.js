@@ -2,7 +2,7 @@ require('dotenv').config()
 const logger = require('./utils/logger')
 const utils = require('./utils/utils')
 const data = require('./data/data')
-const ConvOb = require('./data/models/conversion_object')
+const ChapterForConverter = require('./data/models/conversion_object')
 const converter = require('./utils/converter')
 
 let converterRunning = false
@@ -28,7 +28,7 @@ function enqueue () {
   // start converter
   if (!converterRunning && queue.length > 0) {
     converterRunning = true
-    const ob = new ConvOb()
+    const ob = new ChapterForConverter()
     ob.id = queue.shift().chapter_id
 
     ob.lock() // locked. To be processed
