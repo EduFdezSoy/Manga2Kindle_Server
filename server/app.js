@@ -29,27 +29,11 @@ function enqueue () {
   if (!converterRunning && queue.length > 0) {
     converterRunning = true
     const ob = new ConvOb()
-    data.lockProcess(queue.shift().chapter_id) // locked. To be processed
-      .then((res) => {
-        if (res) {
-          ob.id = res.chapter_id
-          ob.conversion_status = res.conversion_status
+    ob.id = queue.shift().chapter_id
 
-          return data.getChapter(res.chapter_id)
-        } else {
-          console.error(res)
-        }
-      })
+    ob.lock() // locked. To be processed
+      .then((res) => ob.getDataFromDB())
       .then((res) => {
-        ob.manga_id = res.manga_id
-        ob.chapter = res.chapter
-        ob.volume = res.volume
-        ob.title = res.title
-        ob.route = res.file_path
-        ob.mail = res.mail
-        ob.options = res.options
-        ob.mail = res.mail
-
         return converter.enqueue(ob)
       })
       .then((res) => {
