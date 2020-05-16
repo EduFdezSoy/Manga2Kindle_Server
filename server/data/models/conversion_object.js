@@ -13,6 +13,7 @@ class ChapterForConverter {
     this.mail = mail
     this.options = JSON.parse(options)
     this.conversion_status = conversionStatus
+    this.error = 0
   }
 
   getDataFromDB () {
