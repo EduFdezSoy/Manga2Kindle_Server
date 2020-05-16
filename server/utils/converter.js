@@ -23,6 +23,7 @@ const MAX_RETRIES = process.env.CONVERTER_MAX_RETRIES || 3
  */
 exports.enqueue = (chapOb) => {
   return new Promise((resolve, reject) => {
+    // we need to do this here since two instances of this running at the same time generates an exception
     kcc.FolderToEpub(chapOb.route, chapOb.options)
       .then((res) => data.setProcessStatus(chapOb.id, conversioStatus.EPUB_DONE))
       .then((res) => {
