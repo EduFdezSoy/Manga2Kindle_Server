@@ -1,6 +1,5 @@
 require('dotenv').config()
 const logger = require('./utils/logger')
-const utils = require('./utils/utils')
 const data = require('./data/data')
 const ChapterForConverter = require('./data/models/conversion_object')
 const converter = require('./utils/converter')
@@ -15,7 +14,7 @@ function enqueue () {
   data.getPendingProcesses()
     .then((res) => {
       res.forEach(element => {
-        if (!utils.isInQueue(element, queue)) {
+        if (!isInQueue(element, queue)) {
           queue.push(element)
         }
       })
@@ -48,4 +47,13 @@ function enqueue () {
         converterRunning = false
       })
   }
+}
+
+function isInQueue (status, queue) {
+  for (let i = 0; i < queue.length; i++) {
+    if (queue[i].chapter_id === status.chapter_id) {
+      return true
+    }
+  }
+  return false
 }
