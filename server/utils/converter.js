@@ -31,7 +31,10 @@ exports.enqueue = (chapOb) => {
         queue.push(chapOb)
         resolve()
       })
-      .catch((err) => reject(err))
+      .catch((err) => {
+        data.setProcessStatus(chapOb.id, conversioStatus.ENQUEUE)
+        reject(err)
+      })
   })
 }
 
