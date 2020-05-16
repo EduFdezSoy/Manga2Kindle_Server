@@ -24,6 +24,8 @@ function enqueue () {
       logger.error(err.message)
     })
 
+  converter.run()
+
   // start converter
   if (!converterRunning && queue.length > 0) {
     converterRunning = true
