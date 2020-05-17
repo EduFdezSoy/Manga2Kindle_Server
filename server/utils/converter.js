@@ -12,10 +12,13 @@ const rm = require('../utils/rm')
 const emailer = require('../utils/emailer')
 const logger = require('../utils/logger')
 const utils = require('../utils/converter_utils')
-const ChapterForConverter = require('../data/models/conversion_object')
+const ChapterForConverter = require('../data/models/conversion_object') // eslint-disable-line no-unused-vars
 const conversioStatus = require('../data/models/conversion_status')
 
-const queue = [ChapterForConverter]
+/**
+ * @type {ChapterForConverter}
+ */
+const queue = []
 const MAX_RETRIES = process.env.CONVERTER_MAX_RETRIES || 3
 
 /**
