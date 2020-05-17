@@ -205,7 +205,7 @@ function error (ob, err) {
     logger.error('Error (chapter: %d, try: %d): %s', ob.id, ob.error, err.message)
     console.error(err)
     // return to the previous step
-    if (ob.conversion_status !== conversioStatus.ENQUEUE) {
+    if (ob.conversion_status !== conversioStatus.EPUB_PROCESSING) {
       ob.conversion_status--
     }
     // and add again to the queue
