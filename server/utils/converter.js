@@ -39,6 +39,7 @@ exports.run = () => {
     logger.verbose(logMsg)
   }
 
+  const reEnqueue = []
   while (queue.length > 0) {
     const ob = queue.shift()
 
@@ -47,7 +48,7 @@ exports.run = () => {
         if (!converterWorking) {
           convertToEpub(ob)
         } else {
-          queue.push(ob)
+          reEnqueue.push(ob)
         }
         break
       case conversioStatus.EPUB_DONE:
@@ -75,6 +76,10 @@ exports.run = () => {
         console.log(ob)
         break
     }
+  }
+
+  while (reEnqueue.length > 0) {
+    queue.push(reEnqueue.shift())
   }
 }
 
