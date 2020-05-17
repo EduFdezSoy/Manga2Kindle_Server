@@ -9,6 +9,7 @@ const waitTime = 5000
 const queue = []
 
 setInterval(enqueue, waitTime)
+setInterval(converter.run(), 500)
 
 function enqueue () {
   data.getPendingProcesses()
@@ -23,8 +24,6 @@ function enqueue () {
       console.error(err)
       logger.error(err.message)
     })
-
-  converter.run()
 
   // start converter
   if (!converterRunning && queue.length > 0) {
