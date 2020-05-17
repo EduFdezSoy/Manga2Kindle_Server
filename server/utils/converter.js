@@ -202,10 +202,12 @@ function setStatus (ob) {
  */
 function error (ob, err) {
   if (ob.error++ < MAX_RETRIES) {
-    logger.error('Error (chapter: %d, try: %d): ', ob.id, ob.error, err.message)
+    logger.error('Error (chapter: %d, try: %d): %s', ob.id, ob.error, err.message)
     console.error(err)
     // return to the previous step
-    ob.conversion_status--
+    if (ob.conversion_status !== conversioStatus.ENQUEUE) {
+      ob.conversion_status--
+    }
     // and add again to the queue
   } else {
     // we do this to mark it as failed in the database
