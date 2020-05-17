@@ -29,8 +29,14 @@ exports.enqueue = (chapOb) => {
 }
 
 exports.run = () => {
-  console.log('Queue: ')
-  console.log(queue)
+  if (queue.length > 0) {
+    let logMsg = 'Queue length: ' + queue.length
+    queue.forEach(element => {
+      logMsg += '\nid:' + element.id
+      logMsg += ' status: ' + element.conversion_status
+    })
+    logger.verbose(logMsg)
+  }
 
   while (queue.length > 0) {
     const ob = queue.shift()
