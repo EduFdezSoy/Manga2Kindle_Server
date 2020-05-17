@@ -9,7 +9,7 @@ const waitTime = 5000
 const queue = []
 
 setInterval(enqueue, waitTime)
-setInterval(converter.run(), 500)
+setInterval(converter.run, 500)
 
 function enqueue () {
   data.getPendingProcesses()
