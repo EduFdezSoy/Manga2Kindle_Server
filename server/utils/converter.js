@@ -22,27 +22,20 @@ const MAX_RETRIES = process.env.CONVERTER_MAX_RETRIES || 3
  * @param {ChapterForConverter} chapOb
  */
 exports.enqueue = (chapOb) => {
-  return new Promise((resolve, reject) => {
-    // we need to do this here since two instances of this running at the same time generates an exception
-    kcc.FolderToEpub(chapOb.route, chapOb.options)
-      .then((res) => data.setProcessStatus(chapOb.id, conversioStatus.EPUB_DONE))
-      .then((res) => {
-        chapOb.conversion_status = conversioStatus.EPUB_DONE
-        queue.push(chapOb)
-        resolve()
-      })
-      .catch((err) => {
-        data.setProcessStatus(chapOb.id, conversioStatus.ENQUEUE)
-        reject(err)
-      })
-  })
+  queue.push(chapOb)
 }
 
 exports.run = () => {
+  console.log('Queue: ')
+  console.log(queue)
+
   while (queue.length > 0) {
     const ob = queue.shift()
 
     switch (ob.conversion_status) {
+      case conversioStatus.ENQUEUE:
+        convertToEpub(ob)
+        break
       case conversioStatus.EPUB_DONE:
         // insert metadata
         insertMeta(ob)
@@ -74,6 +67,21 @@ exports.run = () => {
 /**
  * @param {ChapterForConverter} ob
  */
+function convertToEpub (ob) {
+  kcc.FolderToEpub(ob.route, ob.options)
+    .then((res) => data.setProcessStatus(ob.id, conversioStatus.EPUB_DONE))
+    .then((res) => {
+      ob.conversion_status = conversioStatus.EPUB_DONE
+      queue.push(ob)
+    })
+    .catch((err) => {
+      error(ob, err)
+    })
+}
+
+/**
+ * @param {ChapterForConverter} ob
+ */
 function insertMeta (ob) {
   data.setProcessStatus(ob.id, conversioStatus.META_PROCESSING)
     .then((res) => {
@@ -100,6 +108,9 @@ function insertMeta (ob) {
     .catch((err) => error(ob, err))
 }
 
+/**
+ * @param {ChapterForConverter} ob
+ */
 function convertToMobi (ob) {
   data.setProcessStatus(ob.id, conversioStatus.MOBI_PROCESSING)
     .then((res) => {
@@ -115,6 +126,9 @@ function convertToMobi (ob) {
     .catch((err) => error(ob, err))
 }
 
+/**
+ * @param {ChapterForConverter} ob
+ */
 function sendFile (ob) {
   data.setProcessStatus(ob.id, conversioStatus.SENDING)
     .then((res) => {
@@ -139,6 +153,9 @@ function sendFile (ob) {
     .catch((err) => error(ob, err))
 }
 
+/**
+ * @param {ChapterForConverter} ob
+ */
 function removeFiles (ob) {
   rm.rmrf(ob.ebookFilePath)
     .then((res) => rm.rmrf(utils.changeExtension(ob.ebookFilePath)))
@@ -151,6 +168,9 @@ function removeFiles (ob) {
     .catch((err) => error(ob, err))
 }
 
+/**
+ * @param {ChapterForConverter} ob
+ */
 function setStatus (ob) {
   let error = false
   let delivered = false
@@ -167,6 +187,10 @@ function setStatus (ob) {
     .catch((err) => error(ob, err))
 }
 
+/**
+ * @param {ChapterForConverter} ob
+ * @param {Error} err
+ */
 function error (ob, err) {
   if (ob.error++ < MAX_RETRIES) {
     logger.error('Error (chapter: %d, try: %d): ', ob.id, ob.error, err.message)
