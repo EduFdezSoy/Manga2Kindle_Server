@@ -20,6 +20,7 @@ const conversioStatus = require('../data/models/conversion_status')
  */
 const queue = []
 const MAX_RETRIES = process.env.CONVERTER_MAX_RETRIES || 3
+let converterWorking = false
 
 /**
  * @param {ChapterForConverter} chapOb
@@ -43,7 +44,11 @@ exports.run = () => {
 
     switch (ob.conversion_status) {
       case conversioStatus.EPUB_PROCESSING:
-        convertToEpub(ob)
+        if (!converterWorking) {
+          convertToEpub(ob)
+        } else {
+          queue.push(ob)
+        }
         break
       case conversioStatus.EPUB_DONE:
         // insert metadata
@@ -77,14 +82,17 @@ exports.run = () => {
  * @param {ChapterForConverter} ob
  */
 function convertToEpub (ob) {
+  converterWorking = true
   kcc.FolderToEpub(ob.route, ob.options)
     .then((res) => data.setProcessStatus(ob.id, conversioStatus.EPUB_DONE))
     .then((res) => {
       ob.conversion_status = conversioStatus.EPUB_DONE
       queue.push(ob)
+      converterWorking = false
     })
     .catch((err) => {
       error(ob, err)
+      converterWorking = false
     })
 }
 
