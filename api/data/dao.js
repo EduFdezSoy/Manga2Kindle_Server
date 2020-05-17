@@ -119,10 +119,10 @@ exports.addAuthor = (name, surname, nickname) => {
 
 // #region chapters methods
 
-exports.putChapter = (mangaId, langId, title, volume, chapter, route, mail) => {
+exports.putChapter = (mangaId, langId, title, volume, chapter, route, options, mail) => {
   return new Promise((resolve, reject) => {
-    pool.query('INSERT INTO chapter(manga_id, lang_id, volume, chapter, title, file_path, mail) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, manga_id, lang_id, volume, chapter, title',
-      [mangaId, langId, volume, chapter, title, route, mail], (err, res) => {
+    pool.query('INSERT INTO chapter(manga_id, lang_id, volume, chapter, title, file_path, options, mail) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, manga_id, lang_id, volume, chapter, title',
+      [mangaId, langId, volume, chapter, title, route, options, mail], (err, res) => {
         if (err) {
           reject(err)
         } else {
@@ -163,6 +163,18 @@ exports.setStatus = (chapter, delivered, error, reason) => {
 exports.editStatus = (chapter, delivered, error, reason) => {
   return new Promise((resolve, reject) => {
     pool.query('UPDATE status SET delivered = $1, error = $2, reason = $3 WHERE chapter_id = $4', [delivered, error, reason, chapter], (err, res) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res.rows)
+      }
+    })
+  })
+}
+
+exports.setStatusAsReady = (chapter) => {
+  return new Promise((resolve, reject) => {
+    pool.query('UPDATE status SET conversion_status = 1 WHERE chapter_id = $1', [chapter], (err, res) => {
       if (err) {
         reject(err)
       } else {

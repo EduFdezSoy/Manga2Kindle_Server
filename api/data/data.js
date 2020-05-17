@@ -162,9 +162,10 @@ exports.putAuthor = (name, surname, nickname) => {
  * @param {Number} volume
  * @param {Number} chapter
  * @param {String} route
+ * @param {String} options
  * @param {String} mail
  */
-exports.putChapter = (mangaId, langId, title, volume, chapter, route, mail) => {
+exports.putChapter = (mangaId, langId, title, volume, chapter, route, options, mail) => {
   return new Promise((resolve, reject) => {
     if (!mangaId || !langId || !route || !mail) {
       reject(new Error('A required param was null'))
@@ -174,7 +175,7 @@ exports.putChapter = (mangaId, langId, title, volume, chapter, route, mail) => {
       if (mail === '') {
         reject(new Error('A required param was a white string'))
       } else {
-        dao.putChapter(mangaId, langId, title, volume, chapter, route, mail)
+        dao.putChapter(mangaId, langId, title, volume, chapter, route, options, mail)
           .then((res) => resolve(res))
           .catch((err) => reject(err))
       }
@@ -232,6 +233,14 @@ exports.setError = (chapterId, delivered = false, error = false, reason) => {
             .catch((err) => reject(err))
         }
       })
+      .catch((err) => reject(err))
+  })
+}
+
+exports.setStatusReady = (chapterId) => {
+  return new Promise((resolve, reject) => {
+    dao.setStatusAsReady(chapterId)
+      .then((res) => resolve(res))
       .catch((err) => reject(err))
   })
 }

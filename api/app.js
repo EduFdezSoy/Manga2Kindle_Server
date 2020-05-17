@@ -18,7 +18,7 @@ const mangaRouter = require('./routes/manga')
 const app = express()
 dotenv.config()
 
-app.use(morgan(':remote-addr - :remote-user | :method | ":url" | "HTTP/:http-version" | :status | ":referrer" | ":user-agent"', { stream: logger.stream }))
+app.use(morgan(':method | ":url" | "HTTP/:http-version" | :status | ":referrer" | ":user-agent"', { stream: logger.stream }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(fileupload({

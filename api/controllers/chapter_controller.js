@@ -1,5 +1,4 @@
 const data = require('../data/data')
-const Converter = require('../utils/converter')
 const path = require('path')
 const logger = require('../utils/logger')
 
@@ -44,7 +43,7 @@ exports.postChapter = (req, res) => {
   // TODO: check file size
 
   // insert chapter data
-  data.putChapter(req.body.manga_id, req.body.lang_id, req.body.title, req.body.volume, req.body.chapter, req.body.route, req.body.mail)
+  data.putChapter(req.body.manga_id, req.body.lang_id, req.body.title, req.body.volume, req.body.chapter, req.body.route, req.body.options, req.body.mail)
     .then((resChapter) => {
       req.body.id = resChapter[0].id
       req.body.title = resChapter[0].title
@@ -56,20 +55,9 @@ exports.postChapter = (req, res) => {
     .then(req.files.file.mv(req.body.route))
     .then(() => {
       logger.verbose('Chapter copied to %s', req.body.route)
-      req.body.converterObject = new Converter(
-        req.body.id,
-        req.body.manga_id,
-        req.body.chapter,
-        req.body.volume,
-        req.body.title,
-        req.body.route,
-        req.body.mail,
-        JSON.parse(req.body.options)
-      )
       return data.setError(req.body.id, false, false, null)
     })
-    .then((res) => req.body.converterObject.convert())
-    .then((mailInfo) => logger.silly('done'))
+    .then((res) => data.setStatusReady(req.body.id))
     .catch((err) => {
       logger.error(err.message)
       data.setError(req.body.id, false, true, err.message)

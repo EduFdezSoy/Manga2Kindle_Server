@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS chapter (
     chapter FLOAT,
     title VARCHAR(100),
     file_path VARCHAR(500),
+    options VARCHAR(50),
     mail VARCHAR(100)
 );
 
@@ -48,6 +49,7 @@ CREATE TABLE IF NOT EXISTS status (
     chapter_id INTEGER REFERENCES chapter(id),
     delivered SMALLINT,
     error SMALLINT,
+    conversion_status SMALLINT NOT NULL DEFAULT 0,
     reason VARCHAR(250)
 ); 
 
