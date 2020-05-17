@@ -36,7 +36,7 @@ exports.run = () => {
     const ob = queue.shift()
 
     switch (ob.conversion_status) {
-      case conversioStatus.ENQUEUE:
+      case conversioStatus.EPUB_PROCESSING:
         convertToEpub(ob)
         break
       case conversioStatus.EPUB_DONE:
