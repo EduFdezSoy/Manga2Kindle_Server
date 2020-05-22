@@ -5,8 +5,8 @@
  * @license CC_BY-NC-SA_4.0
  */
 
+require('dotenv').config()
 const express = require('express')
-const dotenv = require('dotenv')
 const fileupload = require('express-fileupload')
 const path = require('path')
 const morgan = require('morgan')
@@ -16,7 +16,6 @@ const indexRouter = require('./routes/index')
 const mangaRouter = require('./routes/manga')
 
 const app = express()
-dotenv.config()
 
 app.use(morgan(':method | ":url" | "HTTP/:http-version" | :status | ":referrer" | ":user-agent"', { stream: logger.stream }))
 app.use(express.json())
