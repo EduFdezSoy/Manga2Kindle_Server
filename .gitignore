@@ -39,3 +39,6 @@ unziped_*
 *.mobi
 /tmp/*
 /files/*
+
+# database
+manga2kindle.db

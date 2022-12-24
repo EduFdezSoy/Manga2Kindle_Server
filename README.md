@@ -13,7 +13,7 @@
 
 ### Installation
 This installation process was tested on aa fresh Ubuntu 19.04 Server.  
-We'll need a *PostgreSQL* database for later, maker sure to install it and create a datbase and an user to use it.  
+<strike>We'll need a *PostgreSQL* database for later, maker sure to install it and create a datbase and an user to use it.</strike> it's using a Sqlite now.  
 
 Fisrt of all lets install the basis, *node* and *npm*:  
 `sudo apt install nodejs npm`  
@@ -59,7 +59,9 @@ PORT is.. the port where the server will be started.
 TEMP_FOLDER is used to store the uploads while in queue or being processed.  
 DELETE_INPUT if set to false will save all files uploaded. Useful while debugin.  
 
+<strike>
 The second block is all the database configuration: host, user, database, password and port:
+
 ```
 # DATABASE CONNECTION
 PGHOST=localhost
@@ -68,6 +70,8 @@ PGDATABASE=manga2kindle
 PGPASSWORD=manga2kindle
 PGPORT=5432
 ```
+</strike>
+
 
 And the last one has all the mail service configuration:
 ```
