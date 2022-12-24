@@ -46,8 +46,8 @@ exports.postChapter = (req, res) => {
   // insert chapter data
   data.putChapter(req.body.manga_id, req.body.lang_id, req.body.title, req.body.volume, req.body.chapter, req.body.route, req.body.mail)
     .then((resChapter) => {
-      req.body.id = resChapter[0].id
-      req.body.title = resChapter[0].title
+      req.body.id = resChapter.id
+      req.body.title = resChapter.title
       // return chapter data
       res.json(resChapter)
       return data.setStatus(req.body.id, false, false, null)
