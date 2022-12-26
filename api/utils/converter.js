@@ -34,14 +34,30 @@ class Converter {
       kcc.FolderToEpub(this.route, this.options)
         .then((stdout) => data.getManga(this.manga_id))
         .then((resManga) => {
-          mangaOb = resManga[0]
+          mangaOb = resManga
+
+          if (mangaOb == undefined) {
+            mangaOb = {
+              title: "",
+            }
+
+            let blankAuthor = {
+              id: 0,
+              name: "",
+              surname: "",
+              nickname: "",
+            }
+
+            return blankAuthor
+          }
+
           return data.getAuthor(mangaOb.author_id)
         })
         .then((resAuthor) => {
           const epubName = formEpubFilename(this.route)
           const title = formEpubTitle(mangaOb.title, this.chapter, this.volume, this.title)
-          const author = formAuthorName(resAuthor[0])
-          const authorAs = formAuthorAs(resAuthor[0])
+          const author = formAuthorName(resAuthor)
+          const authorAs = formAuthorAs(resAuthor)
 
           // itadakimasu!  --  edit the epub, add lots of metadata and close it
           return epubManager.edit(epubName, title, mangaOb.title, this.chapter, author, authorAs, mangaOb.uuid)
@@ -69,7 +85,10 @@ class Converter {
           }
         })
         .then((res) => resolve(res))
-        .catch((err) => reject(err))
+        .catch((err) => {
+          console.error(err);
+          reject(err)
+        })
     })
   }
 }

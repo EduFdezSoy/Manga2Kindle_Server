@@ -186,10 +186,18 @@ function editJson (json, title, serie, chapter, author, authorAs, seriesIdentifi
       throw (new Error('JSON is undefined'))
     }
 
-    // json.package.metadata[0]['dc:title'][0] = title + " - " + json.package.metadata[0]['dc:title'][0]
-    json.package.metadata[0]['dc:title'][0] = title
-    // json.package.metadata[0]['dc:title'][0] = title + " " + chapter;
-    json.package.metadata[0]['dc:creator'][0] = { _: author, $: { 'opf:file-as': authorAs, 'opf:role': 'aut' } }
+    if (title != "") {
+      // json.package.metadata[0]['dc:title'][0] = title + " - " + json.package.metadata[0]['dc:title'][0]
+      json.package.metadata[0]['dc:title'][0] = title
+      // json.package.metadata[0]['dc:title'][0] = title + " " + chapter;
+    }
+
+    if ((author != "" || authorAs != "") && (author != undefined || authorAs != undefined)) {
+      json.package.metadata[0]['dc:creator'][0] = { _: author, $: { 'opf:file-as': authorAs, 'opf:role': 'aut' } }
+    } else {
+      json.package.metadata[0]['dc:creator'][0] = { _: process.env.MASTER_NAME, $: { 'opf:file-as': process.env.MASTER_NAME, 'opf:role': 'aut' } }
+    }
+
     json.package.metadata[0]['dc:contributor'][0]._ = process.env.MASTER_NAME + ' v' + require('../../package.json').version
 
     json.package.metadata[0].meta.push({ $: { property: 'belongs-to-collection', id: 'c01' }, _: serie })
@@ -197,7 +205,18 @@ function editJson (json, title, serie, chapter, author, authorAs, seriesIdentifi
     json.package.metadata[0].meta.push({ $: { refines: '#c01', property: 'group-position' }, _: chapter })
     json.package.metadata[0].meta.push({ $: { refines: '#c01', property: 'dcterms:identifier' }, _: seriesIdentifier })
 
-    const ebookTitle = json.package.metadata[0]['dc:title'][0] + ' - ' + author
+    let ebookTitle
+    if (author !=  "") {
+      ebookTitle = json.package.metadata[0]['dc:title'][0] + ' - ' + author
+    } else {
+      ebookTitle = json.package.metadata[0]['dc:title'][0]
+    }
+
+    if (ebookTitle == "") {
+      ebookTitle = "unknown"
+    }
+
+    ebookTitle = ebookTitle.trim()
 
     resolve({ ebookTitle, json })
   })

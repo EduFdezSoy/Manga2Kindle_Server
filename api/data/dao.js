@@ -185,7 +185,7 @@ exports.addManga = (title, uuid, authorId) => {
       openDatabase();
     }
 
-    db.run(
+    db.get(
       "INSERT INTO manga(title, uuid, author_id) VALUES (?, ?, ?) RETURNING id, title, uuid, author_id",
       [title, uuid, authorId],
       (err, res) => {
@@ -275,7 +275,7 @@ exports.addAuthor = (name, surname, nickname) => {
       openDatabase();
     }
 
-    db.run(
+    db.get(
       "INSERT INTO author(name, surname, nickname) VALUES (?, ?, ?) RETURNING id, name, surname, nickname",
       [name, surname, nickname],
       (err, res) => {
